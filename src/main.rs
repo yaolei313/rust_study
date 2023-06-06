@@ -8,7 +8,7 @@ use std::io;
  * i32      u32
  * i64      u64
  * i128     u128
- * isize    usize
+ * isize    usize  isize 和 usize 类型取决于运行程序的计算机的类型。 在64位体系结构上使用64位类型，在32位上使用32位类型。 如果未指定整数的类型，并且系统无法推断类型，则默认情况下，系统会分配 i32 类型
  * f32      f64
  * bool
  * char     21位，但宽度会被填充至32位
@@ -54,7 +54,7 @@ enum Age {
 }
 
 // Declare Car struct to describe vehicle with four named fields
-#[derive(Debug)]
+#[derive(PartialEq, Debug)]
 struct Car {
     color: String,
     motor: Transmission,
@@ -115,6 +115,41 @@ fn car_factory(color: String, motor: Transmission, roof: bool, miles: u32) -> Ca
     }
 }
 
+// Build "Car" using input arguments
+fn car_factory2(order: i32, miles: u32) -> Car {
+    let colors = ["Blue", "Green", "Red", "Silver"];
+
+    // Prevent panic: Check color index for colors array, reset as needed
+    // Valid color = 1, 2, 3, or 4
+    // If color > 4, reduce color to valid index
+    // 访问array的下标是usize类型
+    let mut color = order as usize;
+    while color > 4 {
+        // color = 5 --> index 1, 6 --> 2, 7 --> 3, 8 --> 4
+        color = color - 4;
+    }
+
+    // Add variety to orders for motor type and roof type
+    let mut motor = Transmission::Manual;
+    let mut roof: bool = true;
+    if order % 3 == 0 {
+        // 3, 6, 9
+        motor = Transmission::Automatic;
+    } else if order % 2 == 0 {
+        // 2, 4, 8, 10
+        motor = Transmission::SemiAuto;
+        roof = false;
+    } // 1, 5, 7, 11
+
+    // Return requested "Car"
+    Car {
+        color: String::from(colors[(color - 1)]),
+        motor: motor,
+        roof: roof,
+        age: car_quality(miles),
+    }
+}
+
 fn study_struct() {
     let user_1 = Student {
         name: String::from("libai"),
@@ -141,17 +176,38 @@ fn study_enum() {
         "\nWebEvent enum structure: \n\n {:?} \n\n {:?} \n\n {:#?}",
         we_load, we_click, we_key
     );
+
+    match we_load {
+        WebEvent::WELoad(a) => {
+            println!("a {}", a);
+        }
+        _ => {
+            println!("other")
+        }
+    }
+
+    let a_number = Some(8);
+    if let Some(v) = a_number {
+        println!("value is {}", v);
+    }
+    assert_eq!(a_number.unwrap(), 8);
+    //assert_eq!(a_number.expect("not match custom panic"), 9)
+
+    let b: Option<&str> = None;
+    let b2 = b.unwrap_or("hello");
+    println!("b2 {}", b2);
 }
 
 fn study_array_and_vec() {
     // 数组长度不可变
     let array_1 = ["a", "b", "c"];
     let mut array_2: [i32; 5] = [0; 5];
-    array_2[2] = 2;
+    array_2[2] = 2; // 修改数据内容的话，必须增加mut
     println!("array1: {:?},array2: {:#?}", array_1, array_2);
 
     // 长度可变
     let vec_1 = vec![1, 2, 3];
+    println!("{} {:?} {:?}", vec_1[0], vec_1.get(1), vec_1.get(99)); // 下标访问越界会panic，get不会
     let vec_2: Vec<i32> = vec![0; 5];
     let mut vec_3 = Vec::new();
     vec_3.push('a');
@@ -173,36 +229,130 @@ fn study_map() {
 
     let desc = name_map.get("Programming in Rust");
     println!("desc: {:?}", desc);
+
+    let mut map2 = HashMap::new();
+    map2.insert("k", 123);
+    map2.insert("k1", 234);
+    map2.remove("k");
+    println!("map2: {:?}", map2)
 }
 
 fn study_complex_type() {
-    let mut car = car_factory(String::from("Red"), Transmission::Manual, false, 0);
-    println!(
-        "Car 1 = {}, {:?} transmission, roof: {}, mileage: {:?}",
-        car.color, car.motor, car.roof, car.age
-    );
+    let mut map1 = HashMap::new();
+    let mut order_id = 0;
 
     let colors = ["Blue", "Green", "Red", "Sliver"];
-    let mut engine = Transmission::Manual;
+    let mut engine;
     // Order 3 cars, one car for each type of transmission
 
     // Car order #2: Used, Semi-automatic, Convertible
     engine = Transmission::SemiAuto;
-    car = car_factory(String::from(colors[1]), engine, false, 100);
+    let mut car = car_factory(String::from(colors[1]), engine, false, 100);
     println!(
-        "Car order 2: {:?}, Hard top = {}, {:?}, {}, {} miles",
+        "Car order : {:?}, Hard top = {}, {:?}, {}, {} miles",
         car.age.0, car.roof, car.motor, car.color, car.age.1
     );
+    order_id += 1;
+    map1.insert(order_id, car);
 
     // Car order #1: New, Manual, Hard top
-    car_factory(String::from("Orange"), Transmission::Manual, true, 0);
+    engine = Transmission::Manual;
+    car = car_factory(String::from("Orange"), engine, true, 0);
+    order_id += 1;
+    map1.insert(order_id, car);
+    println!("car order {} {:?}", order_id, map1.get(&order_id));
 
     // Car order #2: Used, Semi-automatic, Convertible
-    car_factory(String::from("Red"), Transmission::SemiAuto, false, 565);
-
-    // Car order #3: Used, Automatic, Hard top
-    car_factory(String::from("White"), Transmission::Automatic, true, 3000);
+    car = car_factory(String::from("Red"), Transmission::SemiAuto, false, 565);
+    order_id += 1;
+    map1.insert(order_id, car);
+    println!("car order {} {:?}", order_id, map1.get(&order_id));
 }
+
+fn build_car() {
+    let mut orders = HashMap::new();
+    let mut miles = 0;
+    let mut car;
+    for order in 1..7 {
+        // Call car_factory to fulfill order
+        // Add order <K, V> pair to "orders" hash map
+        // Call println! to show order details from the hash map
+        car = car_factory2(order, miles);
+        orders.insert(order, car);
+        println!("Car order {}: {:?}", order, orders.get(&order));
+
+        // Reset miles for order variety
+        if miles == 2100 {
+            miles = 0;
+        } else {
+            miles = miles + 700;
+        }
+    }
+}
+
+fn study_loop() {
+    let mut count = 1;
+    let stop_count = loop {
+        count += 1;
+        if count == 100 {
+            break count;
+        }
+    };
+    println!("break count at {}", stop_count);
+
+    while count < 200 {
+        count += 10
+    }
+    println!("after while loop as {}", count);
+
+    let birds = ["ostrich", "peacock", "stork"];
+    for item in birds {
+        print!("{}, \t", item);
+    }
+    println!("");
+    for item in birds.iter() {
+        print!("{}, \t", item);
+    }
+    println!("");
+    for number in 0..5 {
+        print!("{}, ", number)
+    }
+}
+
+trait Area {
+    fn area(&self) -> f64;
+}
+
+struct Circle {
+    radius: f64,
+}
+
+struct Rectangle {
+    width: f64,
+    height: f64,
+}
+
+impl Area for Circle {
+    fn area(&self) -> f64 {
+        use std::f64::consts::PI;
+        PI * self.radius.powf(2.0)
+    }
+}
+
+impl Area for Rectangle {
+    fn area(&self) -> f64 {
+        self.height * self.width
+    }
+}
+
+fn study_trait() {
+    let circle = Circle { radius: 10.0 };
+    let rectangle = Rectangle {
+        width: 5.0,
+        height: 3.0,
+    };
+}
+
 
 fn main() {
     println!("guess the number, {}", "yao");
@@ -222,4 +372,6 @@ fn main() {
     study_array_and_vec();
     study_map();
     study_complex_type();
+
+    study_loop();
 }
