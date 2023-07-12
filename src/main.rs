@@ -1,3 +1,6 @@
+mod authentication;
+mod test;
+
 use std::collections::HashMap;
 use std::io;
 
@@ -209,7 +212,7 @@ fn study_array_and_vec() {
     let vec_1 = vec![1, 2, 3];
     println!("{} {:?} {:?}", vec_1[0], vec_1.get(1), vec_1.get(99)); // 下标访问越界会panic，get不会
     let vec_2: Vec<i32> = vec![0; 5];
-    let mut vec_3 = Vec::new();
+    let mut vec_3: Vec<char> = Vec::new();
     vec_3.push('a');
     vec_3.push('b');
     let item = vec_3.pop(); // 从vec尾部pop一个值出来
@@ -220,6 +223,8 @@ fn study_array_and_vec() {
         "vec_1: {:?}, vec_2: {:?}, vec_3: {:?}, {:?}",
         vec_1, vec_2, vec_3, item
     );
+    let vec_4: Vec<char> = vec_3.drain(0..vec_3.len()).collect();
+    println!("vec_4: {:?}", vec_4);
 }
 
 fn study_map() {
@@ -327,9 +332,29 @@ struct Circle {
     radius: f64,
 }
 
+impl std::fmt::Display for Circle {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "radius: {}", self.radius)
+    }
+}
+
 struct Rectangle {
     width: f64,
     height: f64,
+}
+
+impl std::fmt::Display for Rectangle {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "width: {}, height: {}", self.width, self.height)
+    }
+}
+
+impl Iterator for Circle {
+    type Item = f64;
+
+    fn next(&mut self) -> Option<f64> {
+        todo!()
+    }
 }
 
 impl Area for Circle {
@@ -345,14 +370,33 @@ impl Area for Rectangle {
     }
 }
 
+#[derive(Debug, PartialEq)]
+struct Point<T> {
+    x: T,
+    y: T,
+}
+
+impl<T: std::fmt::Display> std::fmt::Display for Point<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "({} {})", self.x, self.y)
+    }
+}
+
 fn study_trait() {
     let circle = Circle { radius: 10.0 };
     let rectangle = Rectangle {
         width: 5.0,
         height: 3.0,
     };
+    println!("object {} {}", circle, rectangle)
 }
 
+fn study_module() {
+    let mut user = authentication::User::new("jeremy", "super-secret");
+
+    println!("The username is: {}", user.get_username());
+    user.set_password("even-more-secret");
+}
 
 fn main() {
     println!("guess the number, {}", "yao");
@@ -374,4 +418,6 @@ fn main() {
     study_complex_type();
 
     study_loop();
+    study_trait();
+    study_module();
 }
