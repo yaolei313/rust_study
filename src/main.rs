@@ -180,6 +180,7 @@ fn study_enum() {
         we_load, we_click, we_key
     );
 
+    // match模式匹配
     match we_load {
         WebEvent::WELoad(a) => {
             println!("a {}", a);
@@ -190,6 +191,7 @@ fn study_enum() {
     }
 
     let a_number = Some(8);
+    // if let表达式，单个模式匹配
     if let Some(v) = a_number {
         println!("value is {}", v);
     }
