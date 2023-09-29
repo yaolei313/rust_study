@@ -1,23 +1,16 @@
 mod authentication;
+mod base;
 mod test;
 
 use std::collections::HashMap;
 use std::io;
 
-// 基本类型
 /*
- * i8       u8
- * i16      u16
- * i32      u32
- * i64      u64
- * i128     u128
- * isize    usize  isize 和 usize 类型取决于运行程序的计算机的类型。 在64位体系结构上使用64位类型，在32位上使用32位类型。 如果未指定整数的类型，并且系统无法推断类型，则默认情况下，系统会分配 i32 类型
- * f32      f64
- * bool
- * char     21位，但宽度会被填充至32位
- * &str     String  字符串字面量，不可变。字符串对象，可变。
+ * struct分为3类
+ * classic struct
+ * tuple struct 使用序号访问字段，从0开始
+ * unit-like struct 实现trait使用，但不需要存储
  */
-
 // Classic struct with name field
 #[derive(Debug)]
 struct Student {
@@ -59,7 +52,9 @@ enum Age {
 // Declare Car struct to describe vehicle with four named fields
 #[derive(PartialEq, Debug)]
 struct Car {
+    // 使用String类型而不是&str是为了拥有所有权，若使用&str，则需要lifecycle标识符
     color: String,
+    // name: &str,
     motor: Transmission,
     roof: bool,
     age: (Age, u32),
@@ -88,38 +83,8 @@ fn car_quality(miles: u32) -> (Age, u32) {
     }
 }
 
-// Build a new "Car" using the values of four input arguments
-// - color (String)
-// - motor (Transmission enum)
-// - roof (boolean, true if the car has a hard top roof)
-// - miles (u32)
-// Call the car_quality(miles) function to get the car age
-// Return an instance of a "Car" struct with the arrow `->` syntax
-fn car_factory(color: String, motor: Transmission, roof: bool, miles: u32) -> Car {
-    let car_q = car_quality(miles);
-    // Show details about car order
-    // - Check if order is for Used or New car, then check the roof type
-    // - Print details for New or Used car based on roof type
-    if car_q.0 == Age::Used && roof {
-        println!(
-            "Prepare a used car: {:?}, {}, Hard top, {} miles\n",
-            motor, color, miles
-        );
-    }
-
-    // Create a new "Car" instance as requested
-    // - Bind first three fields to values of input arguments
-    // - Bind "age" to tuple returned from car_quality(miles)
-    Car {
-        color: color,
-        motor: motor,
-        roof: roof,
-        age: car_quality(miles),
-    }
-}
-
 // Build "Car" using input arguments
-fn car_factory2(order: i32, miles: u32) -> Car {
+fn car_factory(order: i32, miles: u32) -> Car {
     let colors = ["Blue", "Green", "Red", "Silver"];
 
     // Prevent panic: Check color index for colors array, reset as needed
@@ -159,9 +124,9 @@ fn study_struct() {
         level: 1,
         remote: true,
     };
-    let mark_1 = Grades('A', 'A', 'A', 'A', 3.75);
+    let m1 = Grades('A', 'A', 'A', 'A', 3.75);
     let u_1 = Unit {};
-    println!("{:?}, {:?}, {:?}", user_1, mark_1, u_1);
+    println!("{:?}, {:?}, {:?}", user_1, m1.4, u_1);
 }
 
 fn study_enum() {
@@ -203,79 +168,6 @@ fn study_enum() {
     println!("b2 {}", b2);
 }
 
-fn study_array_and_vec() {
-    // 数组长度不可变
-    let array_1 = ["a", "b", "c"];
-    let mut array_2: [i32; 5] = [0; 5];
-    array_2[2] = 2; // 修改数据内容的话，必须增加mut
-    println!("array1: {:?},array2: {:#?}", array_1, array_2);
-
-    // 长度可变
-    let vec_1 = vec![1, 2, 3];
-    println!("{} {:?} {:?}", vec_1[0], vec_1.get(1), vec_1.get(99)); // 下标访问越界会panic，get不会
-    let vec_2: Vec<i32> = vec![0; 5];
-    let mut vec_3: Vec<char> = Vec::new();
-    vec_3.push('a');
-    vec_3.push('b');
-    let item = vec_3.pop(); // 从vec尾部pop一个值出来
-    vec_3.push('d');
-    vec_3.push('e');
-    vec_3[1] = 'c'; // vec可以直接修改，不需要mut标识
-    println!(
-        "vec_1: {:?}, vec_2: {:?}, vec_3: {:?}, {:?}",
-        vec_1, vec_2, vec_3, item
-    );
-    let vec_4: Vec<char> = vec_3.drain(0..vec_3.len()).collect();
-    println!("vec_4: {:?}", vec_4);
-}
-
-fn study_map() {
-    let mut name_map: HashMap<&str, &str> = HashMap::new();
-    name_map.insert("abc", "1");
-    name_map.insert("Programming in Rust", "Great examples.");
-
-    let desc = name_map.get("Programming in Rust");
-    println!("desc: {:?}", desc);
-
-    let mut map2 = HashMap::new();
-    map2.insert("k", 123);
-    map2.insert("k1", 234);
-    map2.remove("k");
-    println!("map2: {:?}", map2)
-}
-
-fn study_complex_type() {
-    let mut map1 = HashMap::new();
-    let mut order_id = 0;
-
-    let colors = ["Blue", "Green", "Red", "Sliver"];
-    let mut engine;
-    // Order 3 cars, one car for each type of transmission
-
-    // Car order #2: Used, Semi-automatic, Convertible
-    engine = Transmission::SemiAuto;
-    let mut car = car_factory(String::from(colors[1]), engine, false, 100);
-    println!(
-        "Car order : {:?}, Hard top = {}, {:?}, {}, {} miles",
-        car.age.0, car.roof, car.motor, car.color, car.age.1
-    );
-    order_id += 1;
-    map1.insert(order_id, car);
-
-    // Car order #1: New, Manual, Hard top
-    engine = Transmission::Manual;
-    car = car_factory(String::from("Orange"), engine, true, 0);
-    order_id += 1;
-    map1.insert(order_id, car);
-    println!("car order {} {:?}", order_id, map1.get(&order_id));
-
-    // Car order #2: Used, Semi-automatic, Convertible
-    car = car_factory(String::from("Red"), Transmission::SemiAuto, false, 565);
-    order_id += 1;
-    map1.insert(order_id, car);
-    println!("car order {} {:?}", order_id, map1.get(&order_id));
-}
-
 fn build_car() {
     let mut orders = HashMap::new();
     let mut miles = 0;
@@ -284,7 +176,7 @@ fn build_car() {
         // Call car_factory to fulfill order
         // Add order <K, V> pair to "orders" hash map
         // Call println! to show order details from the hash map
-        car = car_factory2(order, miles);
+        car = car_factory(order, miles);
         orders.insert(order, car);
         println!("Car order {}: {:?}", order, orders.get(&order));
 
@@ -294,35 +186,6 @@ fn build_car() {
         } else {
             miles = miles + 700;
         }
-    }
-}
-
-fn study_loop() {
-    let mut count = 1;
-    let stop_count = loop {
-        count += 1;
-        if count == 100 {
-            break count;
-        }
-    };
-    println!("break count at {}", stop_count);
-
-    while count < 200 {
-        count += 10
-    }
-    println!("after while loop as {}", count);
-
-    let birds = ["ostrich", "peacock", "stork"];
-    for item in birds {
-        print!("{}, \t", item);
-    }
-    println!("");
-    for item in birds.iter() {
-        print!("{}, \t", item);
-    }
-    println!("");
-    for number in 0..5 {
-        print!("{}, ", number)
     }
 }
 
@@ -340,14 +203,13 @@ impl std::fmt::Display for Circle {
     }
 }
 
-struct Rectangle {
-    width: f64,
-    height: f64,
-}
-
-impl std::fmt::Display for Rectangle {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "width: {}, height: {}", self.width, self.height)
+impl Area for Circle {
+    // &self实际是self: &Seft的缩写，在impl代码块中，Self是类型的别名，此处Self代表Circle
+    // 方法可以获取self的所有权，也可以不可变的借用&self，也可以可变的借用&mut self
+    // 仅使用self很少见，一般场景为self转换为别的实例的时候，防止调用方使用转换前的视力
+    fn area(&self) -> f64 {
+        use std::f64::consts::PI;
+        PI * self.radius.powf(2.0)
     }
 }
 
@@ -359,16 +221,53 @@ impl Iterator for Circle {
     }
 }
 
-impl Area for Circle {
-    fn area(&self) -> f64 {
-        use std::f64::consts::PI;
-        PI * self.radius.powf(2.0)
+fn convert_to_i32(default: i32, str: &str) -> i32 {
+    let r = str.trim().parse::<i32>();
+    if r.is_err() {
+        default
+    } else {
+        r.unwrap()
+    }
+}
+
+#[derive(Debug)]
+struct Rectangle {
+    width: i32,
+    height: i32,
+}
+
+impl Rectangle {
+    fn new(s: &str) -> Rectangle {
+        let mut width: i32 = 0;
+        let mut height: i32 = 0;
+        if s.len() != 0 {
+            let v: Vec<&str> = s.split(',').collect();
+            if v.len() == 2 {
+                if let Some(s) = v.get(0) {
+                    width = convert_to_i32(0, s);
+                }
+                if let Some(s) = v.get(1) {
+                    height = convert_to_i32(0, s);
+                }
+            }
+        }
+        Rectangle { width, height }
+    }
+
+    fn can_hold(&self, other: &Rectangle) -> bool {
+        self.width > other.width && self.height > other.height
+    }
+}
+
+impl std::fmt::Display for Rectangle {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "width: {}, height: {}", self.width, self.height)
     }
 }
 
 impl Area for Rectangle {
     fn area(&self) -> f64 {
-        self.height * self.width
+        (self.height * self.width) as f64
     }
 }
 
@@ -386,11 +285,18 @@ impl<T: std::fmt::Display> std::fmt::Display for Point<T> {
 
 fn study_trait() {
     let circle = Circle { radius: 10.0 };
-    let rectangle = Rectangle {
-        width: 5.0,
-        height: 3.0,
-    };
-    println!("object {} {}", circle, rectangle)
+    let r1 = Rectangle::new("10,11");
+    dbg!(&r1);
+    // struct update syntax
+    let r = Rectangle { width: 5, ..r1 };
+
+    // 自动引用和解引用。
+    // 使用object.something()调用方法时，Rust会自动为object添加 &、&mut 或 * 以便使object与方法签名匹配。
+    // 即r.area()实际等同(&r).area();
+    println!("area is:{} {}", r.area(), (&r).area());
+    println!("test dgb!");
+    dbg!(&r);
+    println!("object {} {}", circle, r);
 }
 
 fn study_module() {
@@ -401,7 +307,8 @@ fn study_module() {
 }
 
 fn main() {
-    println!("guess the number, {}", "yao");
+    let age = 30;
+    println!("guess the number, {} {age}", "yao");
     println!("please input your guess.");
     let mut guess = String::new();
 
@@ -412,14 +319,15 @@ fn main() {
     println!("You guessed: {guess}");
 
     // todo!("print this message on compile");
+    base::study_primative_type();
+    base::study_array_and_vec();
+    base::study_map();
+    base::study_slice();
 
     study_struct();
     study_enum();
-    study_array_and_vec();
-    study_map();
-    study_complex_type();
 
-    study_loop();
+    base::study_loop();
     study_trait();
     study_module();
 }
