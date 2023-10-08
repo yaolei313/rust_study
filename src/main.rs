@@ -1,47 +1,20 @@
+// package(cargo toml) -> crate -> mod
+// crate根文件为src/main.rs或src/lib.rs
+// 在crate根文件中声明模块后，比如mod gardon，编译器会到如下位置寻找模块的定义：
+// 1.内联，mod gardon后的{}内
+// 2.src/gardon.rs
+// 3.src/gardon/mod.rs  (老风格，不推荐)
+// 声明子模块，在非crate根文件中定义的模块，都是子模块。比如mod vegetables
+// 1.内联
+// 2.src/gardon/vegetables.rs
+// 3.src/gardon/vegetables/mod.rs  (老风格，不推荐)
+
 mod authentication;
 mod base;
-mod test;
+mod s_unit_test;
 
 use std::collections::HashMap;
 use std::io;
-
-/*
- * struct分为3类
- * classic struct
- * tuple struct 使用序号访问字段，从0开始
- * unit-like struct 实现trait使用，但不需要存储
- */
-// Classic struct with name field
-#[derive(Debug)]
-struct Student {
-    name: String,
-    level: u8,
-    remote: bool,
-}
-
-// tuple struct
-#[derive(Debug)]
-struct Grades(char, char, char, char, f32);
-
-// unit struct
-#[derive(Debug)]
-struct Unit;
-
-#[derive(Debug)]
-struct KeyPress(String, char);
-
-#[derive(Debug)]
-struct MouseClick {
-    x: i64,
-    y: i64,
-}
-
-#[derive(Debug)]
-enum WebEvent {
-    WELoad(bool),
-    WEKey(KeyPress),
-    WEClick(MouseClick),
-}
 
 #[derive(PartialEq, Debug)]
 enum Age {
@@ -111,61 +84,11 @@ fn car_factory(order: i32, miles: u32) -> Car {
 
     // Return requested "Car"
     Car {
-        color: String::from(colors[(color - 1)]),
+        color: String::from(colors[color - 1]),
         motor: motor,
         roof: roof,
         age: car_quality(miles),
     }
-}
-
-fn study_struct() {
-    let user_1 = Student {
-        name: String::from("libai"),
-        level: 1,
-        remote: true,
-    };
-    let m1 = Grades('A', 'A', 'A', 'A', 3.75);
-    let u_1 = Unit {};
-    println!("{:?}, {:?}, {:?}", user_1, m1.4, u_1);
-}
-
-fn study_enum() {
-    // algebraic data type
-    let we_load = WebEvent::WELoad(true);
-
-    let m_click = MouseClick { x: 100, y: 80 };
-    let we_click = WebEvent::WEClick(m_click);
-
-    let t_keypress = KeyPress(String::from("Ctrl+"), 'N');
-    let we_key = WebEvent::WEKey(t_keypress);
-
-    // 通过 #[derive(Debug)] 语法可以在代码执行期间查看某些在标准输出中无法查看的值。 要使用 println! 宏查看调试数据，请使用语法 {:#?} 以可读的方式格式化数据。
-    println!(
-        "\nWebEvent enum structure: \n\n {:?} \n\n {:?} \n\n {:#?}",
-        we_load, we_click, we_key
-    );
-
-    // match模式匹配
-    match we_load {
-        WebEvent::WELoad(a) => {
-            println!("a {}", a);
-        }
-        _ => {
-            println!("other")
-        }
-    }
-
-    let a_number = Some(8);
-    // if let表达式，单个模式匹配
-    if let Some(v) = a_number {
-        println!("value is {}", v);
-    }
-    assert_eq!(a_number.unwrap(), 8);
-    //assert_eq!(a_number.expect("not match custom panic"), 9)
-
-    let b: Option<&str> = None;
-    let b2 = b.unwrap_or("hello");
-    println!("b2 {}", b2);
 }
 
 fn build_car() {
@@ -271,18 +194,6 @@ impl Area for Rectangle {
     }
 }
 
-#[derive(Debug, PartialEq)]
-struct Point<T> {
-    x: T,
-    y: T,
-}
-
-impl<T: std::fmt::Display> std::fmt::Display for Point<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "({} {})", self.x, self.y)
-    }
-}
-
 fn study_trait() {
     let circle = Circle { radius: 10.0 };
     let r1 = Rectangle::new("10,11");
@@ -323,9 +234,10 @@ fn main() {
     base::study_array_and_vec();
     base::study_map();
     base::study_slice();
+    base::study_option();
+    base::study_enum_and_match();
 
-    study_struct();
-    study_enum();
+    base::s_struct_trait::study_struct();
 
     base::study_loop();
     study_trait();

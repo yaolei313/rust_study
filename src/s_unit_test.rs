@@ -3,8 +3,13 @@ pub fn add(a: i32, b: i32) -> i32 {
 }
 
 // 测试模块，测试用例尽量写到这里边
+// assert!
+// assert_eq!
+// assert_ne!
+// #[cfg(test)]告诉rust编译器只有在cargo test执行的时候才编译和运行测试代码，而执行cargo build时不执行
 #[cfg(test)]
 mod add_function_tests {
+    // 引用父模块的所有项
     use super::*;
 
     // 单元测试
