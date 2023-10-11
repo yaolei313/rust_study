@@ -29,6 +29,11 @@ pub mod s_struct_trait;
  * Vec<>,HashMap<>类型都可能涉及到所有权的转移
  *
  * == 等于 PartialEq，Eq 2个trait，前者不满足自反性，即x==x，仅满足对称性x==y则y==x和传递性x==y,y==z,则x==z
+ *
+ * package包含Cargo.toml，描述了如何build多个crate
+ * crate分为2种，binary crate和library crate，前者包含main入口，可以编译为executable file
+ *
+ * rust编译的最小代码单元是crate，crate root是一个source file。分别为src/lib.rs,src/main.rs
  */
 pub fn study_primative_type() {
     let num: u32 = "313".parse().expect("not a number");
