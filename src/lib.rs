@@ -2,6 +2,15 @@ pub fn add(a: i32, b: i32) -> i32 {
     a + b
 }
 
+pub fn convert_to_i32(default: i32, str: &str) -> i32 {
+    let r = str.trim().parse::<i32>();
+    if r.is_err() {
+        default
+    } else {
+        r.unwrap()
+    }
+}
+
 // 测试模块，测试用例尽量写到这里边
 // assert!
 // assert_eq!

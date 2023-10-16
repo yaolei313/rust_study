@@ -25,6 +25,73 @@ struct Grades(char, char, char, char, f32);
 #[derive(Debug)]
 struct Unit;
 
+trait Area {
+    fn area(&self) -> f64;
+}
+
+struct Circle {
+    radius: f64,
+}
+
+impl std::fmt::Display for Circle {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "radius: {}", self.radius)
+    }
+}
+
+impl Area for Circle {
+    // &self实际是self: &Seft的缩写，在impl代码块中，Self是类型的别名，此处Self代表Circle
+    // 方法可以获取self的所有权，也可以不可变的借用&self，也可以可变的借用&mut self。即 &self , &mut self, self
+    // 仅使用self很少见，一般场景为self转换为别的实例的时候，防止调用方使用转换前的实例
+    fn area(&self) -> f64 {
+        use std::f64::consts::PI;
+        PI * self.radius.powf(2.0)
+    }
+}
+
+#[derive(Debug)]
+pub struct Rectangle {
+    pub width: i32,
+    pub height: i32,
+}
+
+impl Rectangle {
+    // associated function
+    fn new(s: &str) -> Rectangle {
+        let mut width: i32 = 0;
+        let mut height: i32 = 0;
+        if s.len() != 0 {
+            let v: Vec<&str> = s.split(',').collect();
+            if v.len() == 2 {
+                if let Some(s) = v.get(0) {
+                    width = rust_study::convert_to_i32(0, s);
+                }
+                if let Some(s) = v.get(1) {
+                    height = rust_study::convert_to_i32(0, s);
+                }
+            }
+        }
+        Rectangle { width, height }
+    }
+
+    // method
+    fn can_hold(&self, other: &Rectangle) -> bool {
+        self.width > other.width && self.height > other.height
+    }
+}
+
+impl std::fmt::Display for Rectangle {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "width: {}, height: {}", self.width, self.height)
+    }
+}
+
+impl Area for Rectangle {
+    fn area(&self) -> f64 {
+        (self.height * self.width) as f64
+    }
+}
+
 pub fn study_struct() {
     let user_1 = Student {
         name: String::from("libai"),
@@ -36,44 +103,21 @@ pub fn study_struct() {
     println!("{:?}, {:?}, {:?}", user_1, m1.4, u_1);
 }
 
-#[derive(Debug, PartialEq)]
-struct Point<T> {
-    x: T,
-    y: T,
+pub fn study_trait() {
+    let circle = Circle { radius: 10.0 };
+    let r1 = Rectangle::new("10,11");
+    dbg!(&r1);
+    // struct update syntax
+    let r = Rectangle { width: 5, ..r1 };
+
+    // 自动引用和解引用。
+    // 使用object.something()调用方法时，Rust会自动为object添加 &、&mut 或 * 以便使object与方法签名匹配。
+    // 即r.area()实际等同(&r).area();
+    println!("area is:{} {}", r.area(), (&r).area());
+    println!("test dgb!");
+    dbg!(&r);
+    println!("object {} {}", circle, r);
 }
-
-impl<T> Point<T> {
-    fn new(x: T, y: T) -> Self {
-        Point { x, y }
-    }
-
-    fn x(&self) -> &T {
-        &self.x
-    }
-
-    fn y(&self) -> &T {
-        &self.y
-    }
-}
-
-impl Point<f32> {
-    fn distance_from_origin(&self) -> f32 {
-        (self.x.powi(2) + self.y.powi(2)).sqrt()
-    }
-}
-
-impl<T: std::fmt::Display> std::fmt::Display for Point<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "({} {})", self.x, self.y)
-    }
-}
-
-pub fn study_genericity() {
-    let p1 = Point { x: 10, y: 20 };
-    println!("x: {}, y:{}", &p1.x, p1.y())
-}
-
-// --------------
 
 pub trait Summary {
     fn summarize_author(&self) -> String;

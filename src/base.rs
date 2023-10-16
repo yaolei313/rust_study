@@ -4,7 +4,9 @@ use std::{
     io::{self, ErrorKind, Read},
 };
 
-pub mod s_lifecycle;
+pub mod s_closure;
+pub mod s_genericity;
+pub mod s_lifetime;
 pub mod s_struct_trait;
 
 // 基本类型
@@ -19,12 +21,13 @@ pub mod s_struct_trait;
  * bool
  * char     21位，但宽度会被填充至32位, 4字节代表一个unicode字符,U+0000,U+D7FF,U+E000~U+10FFFF
  * &str     String  字符串字面量，不可变。字符串对象，可变。
- * tuple
- * array
+ * tuple    ()
+ * array    []
  *
  * String  s[start..endExclude] slice
  * &str 实际就是String slice类型的不可变引用
- * slice类型，没有对象所有权：&str, &[i32]
+ * &[i32] i32类型array的引用
+ * slice类型，没有对象所有权
  *
  * Vec<>,HashMap<>类型都可能涉及到所有权的转移
  *
@@ -80,6 +83,11 @@ pub fn study_array_and_vec() {
     println!("====================study_array_and_vec");
     // 数组长度不可变
     let array_1 = ["a", "b", "c"];
+
+    // 访问array的下标是usize类型，需要使用as做类型转换
+    let number: i32 = 1;
+    let idx = number as usize;
+    println!("array idx need usize type {}", array_1[idx]);
 
     let mut array_2: [i32; 5] = [0; 5];
     array_2[2] = 2; // 修改数据内容的话，必须增加mut
@@ -174,6 +182,13 @@ pub fn study_slice() {
     let s1 = "hello world";
     let s2 = &s1[0..5];
     println!("str slice is {}", s2);
+}
+
+pub fn study_condition_expression() {
+    // if可以是表达式，所有分支必须返回相同类型
+    let miles = 100;
+    let car_desc = if miles > 0 { "new car" } else { "used car" };
+    println!("{}", car_desc);
 }
 
 pub fn study_loop() {
@@ -296,7 +311,7 @@ pub fn study_enum_and_match() {
 fn roll1() {}
 fn roll2() {}
 
-fn study_result() {
+pub fn study_result() {
     let greeting_file_result = File::open("hello.txt");
     let greeting_file = match greeting_file_result {
         Ok(file) => file,
