@@ -47,6 +47,7 @@ fn main() {
 
     base::s_struct_trait::study_struct();
     base::s_struct_trait::study_trait();
+    base::s_genericity::study_genericity();
 
     base::s_closure::study_closure();
 

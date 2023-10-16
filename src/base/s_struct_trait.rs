@@ -219,3 +219,16 @@ pub fn return_summary2(switch: bool) -> Box<dyn Summary> {
         })
     }
 }
+
+// 泛型可以在一个struct上实现多次，比如impl MyIterator2<i8> for Rectangle, imple MyIterator2<i32> for Rectangle等
+// 但是关联类型只能实现一次，比如impl MyIterator for Rectangle
+pub trait MyIterator {
+    // 定义trait的associated type, 关联类型和泛型的区别是？
+    type Item;
+
+    fn next(&mut self) -> Option<Self::Item>;
+}
+
+pub trait MyIterator2<T> {
+    fn next(&mut self) -> Option<T>;
+}

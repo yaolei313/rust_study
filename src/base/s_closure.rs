@@ -111,7 +111,11 @@ where
     }
 }
 
-// 必须声明'a，不然会提升missed match type
+// 必须声明'a，不然会提升mismatched type
 fn exec<'a, F: FnMut(&'a str)>(input: &'a str, mut f: F) {
+    f(input)
+}
+
+fn exec2<F: FnMut(&str)>(input: &str, mut f: F) {
     f(input)
 }
