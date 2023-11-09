@@ -56,7 +56,7 @@ pub struct Rectangle {
 }
 
 impl Rectangle {
-    // associated function
+    // associated function, 没有self参数
     fn new(s: &str) -> Rectangle {
         let mut width: i32 = 0;
         let mut height: i32 = 0;
@@ -107,7 +107,7 @@ pub fn study_trait() {
     let circle = Circle { radius: 10.0 };
     let r1 = Rectangle::new("10,11");
     dbg!(&r1);
-    // struct update syntax
+    // struct update syntax, 移动了数据，r1不能再使用
     let r = Rectangle { width: 5, ..r1 };
 
     // 自动引用和解引用。

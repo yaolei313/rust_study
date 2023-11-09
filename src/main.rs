@@ -35,21 +35,28 @@ fn study_module() {
 
 fn main() {
     // todo!("print this message on compile");
-    base::study_primative_type();
-    base::study_array_and_vec();
-    base::study_map();
-    base::study_slice();
+    base::s_data_type::study_primative_type();
+    base::s_data_type::study_compound_type();
+    base::s_data_type::study_collection_type();
+
+    base::s_smart_pointer::study_smart_point();
+
+    base::study_condition_expression();
     base::study_loop();
     base::study_enum_and_match();
 
     base::study_option();
     base::study_result();
 
+    base::study_type_convert();
+
     base::s_struct_trait::study_struct();
     base::s_struct_trait::study_trait();
     base::s_genericity::study_genericity();
 
     base::s_closure::study_closure();
+
+    base::s_iter::study_iter();
 
     study_module();
 }
