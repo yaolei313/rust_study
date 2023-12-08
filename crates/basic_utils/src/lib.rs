@@ -13,7 +13,7 @@ pub use converter::convert_to_i32;
 /// # Examples
 ///
 /// ```
-/// let sum1 = rust_study::add(1,2);
+/// let sum1 = basic_utils::add(1,2);
 /// assert_eq!(3, sum1);
 ///
 /// ```
@@ -40,10 +40,10 @@ pub mod converter {
     /// convert &str to i32, if err exists return default
     ///
     /// ```
-    /// let r1 = rust_study::convert_to_i32(0, "a");
+    /// let r1 = basic_utils::convert_to_i32(0, "a");
     /// assert_eq!(0, r1);
     ///
-    /// let r2 = rust_study::convert_to_i32(0, "123");
+    /// let r2 = basic_utils::convert_to_i32(0, "123");
     /// assert_eq!(123, r2);
     ///
     /// ```
