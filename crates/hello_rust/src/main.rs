@@ -9,8 +9,8 @@
 // 2.src/gardon/vegetables.rs
 // 3.src/gardon/vegetables/mod.rs  (老风格，不推荐)
 mod authentication;
-mod base;
 
+use basic_concept;
 use std::io;
 
 fn study_io() {
@@ -35,28 +35,7 @@ fn study_module() {
 
 fn main() {
     // todo!("print this message on compile");
-    base::s_data_type::study_primative_type();
-    base::s_data_type::study_compound_type();
-    base::s_data_type::study_collection_type();
-
-    base::s_smart_pointer::study_smart_point();
-
-    base::study_condition_expression();
-    base::study_loop();
-    base::study_enum_and_match();
-
-    base::study_option();
-    base::study_result();
-
-    base::study_type_convert();
-
-    base::s_struct_trait::study_struct();
-    base::s_struct_trait::study_trait();
-    base::s_genericity::study_genericity();
-
-    base::s_closure::study_closure();
-
-    base::s_iter::study_iter();
+    basic_concept::study_basic_concept();
 
     study_module();
 }

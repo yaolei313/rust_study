@@ -1,3 +1,8 @@
+///
+/// 不能为外部struct实现外部trait，这个称为coherence 或 orphan rule规则
+/// 
+/// 
+/// 
 use std::{
     fmt::{Debug, Display},
     time::SystemTime,
@@ -33,6 +38,8 @@ struct Circle {
     radius: f64,
 }
 
+/// 若实现了std::fmt::Debug trait, 即#[derive(Debug)]，可以通过{:?}打印，{:#?}以更可读的方式格式化
+/// 若实现了std::fmt::Display trait, 可以通过{}打印。
 impl std::fmt::Display for Circle {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "radius: {}", self.radius)
@@ -64,10 +71,10 @@ impl Rectangle {
             let v: Vec<&str> = s.split(',').collect();
             if v.len() == 2 {
                 if let Some(s) = v.get(0) {
-                    width = rust_study::convert_to_i32(0, s);
+                    width = basic_utils::convert_to_i32(0, s);
                 }
                 if let Some(s) = v.get(1) {
-                    height = rust_study::convert_to_i32(0, s);
+                    height = basic_utils::convert_to_i32(0, s);
                 }
             }
         }
@@ -177,7 +184,7 @@ pub fn some_fn<T: Summary + Clone, U: Clone + Debug>(t: &T, u: &U) {
 }
 
 // 通过where简化trait bound
-pub fn some_fn2<T, U>(t: &T, u: &U)
+pub fn some_fn2<T, U>(_t: &T, _u: &U)
 where
     T: Summary + Clone,
     U: Clone + Debug,
@@ -231,4 +238,9 @@ pub trait MyIterator {
 
 pub trait MyIterator2<T> {
     fn next(&mut self) -> Option<T>;
+}
+
+enum CarType {
+    New,
+    Used { age: i32 },
 }

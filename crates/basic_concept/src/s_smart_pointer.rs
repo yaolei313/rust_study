@@ -1,16 +1,17 @@
 use std::{
     cell::RefCell,
     fmt::Debug,
+    mem,
     ops::Deref,
     rc::{Rc, Weak},
     sync::Arc,
 };
 
-use rust_study::data_struct::BinaryTreeNode;
+use basic_utils::data_struct::BinaryTreeNode;
 
 /// # Box<T>
 /// 适用如下场景：
-/// * 编译时未知大小的类型,Box作为智能指针，指向堆中数据
+/// * 编译时未知大小的类型,Box作为智能指针，指向堆中数据。 比如Vec<Box<T>>，T是trait
 /// * 不被copy的场景下转移所有权
 /// * 只关注是否实现了某个trait
 /// Box<T> 指向堆上数据，当被丢弃时，会释放堆上的数据。单个所有者
@@ -48,9 +49,12 @@ pub fn study_smart_point() {
     let mut x: i32 = 5;
     modify(&mut x);
 
-    println!("x: {}", x);
+    println!("x: {}, pointer address:{:p}", x, &x);
 
-    let t = Box::new(6);
+    let s: &[i32] = &[1, 2, 3, 4, 5];
+    // allocate on heap and perform a copy of the slice and its contents
+    let box2: Box<[i32]> = Box::from(s);
+    println!("{:?}", box2);
 
     // Box实现了Deref，可以当做常规引用对待。这里用MyBox模拟。
     let z = MyBox::new(5);
@@ -74,6 +78,97 @@ pub fn study_smart_point() {
     study_arc();
 
     study_ref_cell();
+
+    study_pointer();
+}
+
+fn study_pointer() {
+    println!("----box memory start----");
+    let mut v: Vec<i32> = Vec::with_capacity(10);
+    v.push(1);
+    v.push(2);
+    v.push(3);
+    println!(
+        "The vec address:{:p}, size:{}, len:{}, cap:{}",
+        &v,
+        mem::size_of_val(&v),
+        v.len(),
+        v.capacity(),
+    ); // The vec address:0x7ffee4765f78, size:24
+    let box1 = Box::new(v);
+    let pbox = &box1 as *const _ as *const u64;
+
+    println!(
+        "--The box value in memory {:p}: 0x{:x}, box stack size:{}, ref:{:p}",
+        pbox,
+        unsafe { *pbox },
+        mem::size_of_val(&box1),
+        &*box1,
+    ); // --The box value in memory 0x7ffee4765ff0: 0x7fe8e9405c70
+    let pboxvec = unsafe { *pbox as *const u64 };
+    println!("--offset 0 {:p}, 0x{:x}", pboxvec, unsafe { *pboxvec }); // offset 0 0x7fe8e9405c70, 0x7fe8e9405c60
+    println!(
+        "--offset 1: {:p}, 0x{:x}",
+        unsafe { pboxvec.offset(1) },
+        unsafe { *(pboxvec.offset(1)) }
+    ); // --offset 1: 0x7fe8e9405c78, 0x4
+    println!(
+        "--offset 2: {:p}, 0x{:x}",
+        unsafe { pboxvec.offset(2) },
+        unsafe { *(pboxvec.offset(2)) }
+    ); // --offset 2: 0x7fe8e9405c80, 0x2
+
+    println!("----box memory end----");
+
+    let v1: u64 = 5;
+    let p1: *const u64 = &v1;
+    let r1: &u64 = &v1;
+    println!("pointer address: {:p}, {:p}", p1, r1);
+
+    let arr: [u8; 4] = [1, 2, 3, 4];
+    println!("array address {:p}", &arr); // array address 0x7ffeee29e47c
+    let slice: &[u8] = &arr[0..2];
+    let mut vec: Vec<u8> = vec![5, 6, 7, 8];
+    vec.push(9);
+
+    println!("The size of slice: {}", mem::size_of_val(&slice));
+    // The size of slice: 16
+    let p = &slice as *const _ as *const u64;
+    println!(
+        "--The slice {:p}, in memory {:p}: 0x{:x}",
+        &slice,
+        p,
+        unsafe { *p }
+    );
+    // --The slice 0x7ffeee29e4c8, in memory 0x7ffeee29e4c8: 0x7ffeee29e47c
+    println!(
+        "--The value in memory {:p}: {}",
+        unsafe { p.offset(1) },
+        unsafe { *(p.offset(1)) }
+    );
+    // --The value in memory 0x7ffeee29e4d0: 2
+
+    println!("The size of vec: {}", mem::size_of_val(&vec));
+    // The size of vec: 24
+    let p = &vec as *const _ as *const u64;
+    println!("--The vec {:p}, in memory {:p}: 0x{:x}", &vec, p, unsafe {
+        *p
+    });
+    // --The vec 0x7ffeee29e4e8, in memory 0x7ffeee29e4e8: 0x7fb9e7c05c40  pointer
+    println!(
+        "--The value in memory {:p}: {}",
+        unsafe { p.offset(1) },
+        unsafe { *(p.offset(1)) }
+    );
+    // --The value in memory 0x7ffeee29e4f0: 8  capacity
+    println!(
+        "--The value in memory {:p}: {}",
+        unsafe { p.offset(2) },
+        unsafe { *(p.offset(2)) }
+    );
+    // --The value in memory 0x7ffeee29e4f8: 5  len
+
+    println!("--------");
 }
 
 struct MyBox<T: Debug>(T);
@@ -130,10 +225,11 @@ pub fn study_rc() {
         Some(Rc::clone(&n3)),
         1,
     )));
-    let t = Rc::clone(&root);
-    bfs_tree(Some(t));
 
-    println!("{}", root.borrow().val);
+    bfs_tree(Some(Rc::clone(&root)));
+    dfs_tree(Some(Rc::clone(&root)));
+    preorder_traversal(Some(Rc::clone(&root)));
+    postorder_traversal(Some(Rc::clone(&root)));
 }
 
 fn bfs_tree(root: Option<Rc<RefCell<BinaryTreeNode>>>) {
@@ -159,6 +255,83 @@ fn bfs_tree(root: Option<Rc<RefCell<BinaryTreeNode>>>) {
         println!();
     }
     println!("bfs end");
+}
+
+// 等同
+fn dfs_tree(root: Option<Rc<RefCell<BinaryTreeNode>>>) {
+    if root.is_none() {
+        return;
+    }
+    let mut s = Vec::new();
+    let mut p = root;
+    while !s.is_empty() || !p.is_none() {
+        if let Some(t) = p {
+            s.push(Rc::clone(&t));
+            p = t.borrow().left.clone();
+        } else {
+            if let Some(node) = s.pop() {
+                print!("{} \t", node.borrow().val);
+                p = node.borrow().right.clone();
+            }
+        }
+    }
+    println!("dfs end");
+}
+
+// preorder
+fn preorder_traversal(root: Option<Rc<RefCell<BinaryTreeNode>>>) {
+    if root.is_none() {
+        return;
+    }
+    let mut s = Vec::new();
+    // s.push(root.unwrap());
+    // while !s.is_empty() {
+    //     let node = s.pop().unwrap();
+    //     print!("{} \t", node.borrow().val);
+    //     if let Some(r) = node.borrow().right {
+    //         s.push(Rc::clone(&r));
+    //     }
+    //     if let Some(l) = node.borrow().left {
+    //         s.push(Rc::clone(&l));
+    //     }
+    // }
+    s.push(root);
+    while !s.is_empty() {
+        if let Some(node) = s.pop().flatten() {
+            print!("{} \t", node.borrow().val);
+            s.push(node.borrow().right.clone());
+            s.push(node.borrow().left.clone());
+        }
+    }
+
+    println!("preorder_traversal end");
+}
+
+fn postorder_traversal(root: Option<Rc<RefCell<BinaryTreeNode>>>) {
+    if root.is_none() {
+        return;
+    }
+    let mut s = Vec::new();
+    let mut p = root;
+    let mut visited = None;
+    while !s.is_empty() || !p.is_none() {
+        if let Some(t) = p {
+            s.push(Rc::clone(&t));
+            p = t.borrow().left.clone();
+        } else {
+            let t1 = s.last().unwrap();
+            if t1.borrow().right != visited {
+                p = t1.borrow().right.clone();
+                visited = None;
+            } else {
+                if let Some(node) = s.pop() {
+                    print!("{} \t", node.borrow().val);
+                    visited = Some(Rc::clone(&node));
+                }
+            }
+        }
+    }
+    println!("postorder_traversal end");
 }
 
 fn study_arc() {

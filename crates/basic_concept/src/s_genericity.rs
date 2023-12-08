@@ -1,3 +1,15 @@
+///
+/// 泛型是在编译时执行static dispatch，也就是单态化，为每个被泛型替代的具体类型生成非泛型实现。
+/// dyn trait是运行时执行dynamic dispatch，在运行时确定调用的代码。
+///   -- trait对象是个胖指针，包含2个指针，data pointer,vtable pointer。使用vtable指针指向的数据可以确定trait的具体类型。
+///
+/// 泛型有个语法叫默认类型参数default type parameters，比如
+/// pub trait Add<Rhs=Self> {
+///     type Output;
+///     fn add(self, other:Rhs) -> Self::Output;
+/// }
+/// 即实现时，若不指定Rhs的类型，则默认为Self的类型。
+///
 #[derive(Debug, PartialEq)]
 struct Point<T> {
     x: T,
@@ -43,3 +55,4 @@ pub fn study_genericity() {
     };
     println!("distance: {}", p2.distance_from_origin());
 }
+

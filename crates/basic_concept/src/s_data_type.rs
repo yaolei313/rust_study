@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use rust_study;
+use basic_utils;
 
 /// #const常量
 /// 和let相比
@@ -42,7 +42,23 @@ static NAME2: &str = "hello world";
 /// &str     字符串字面量，不可变。字符串对象，可变。
 /// &[i32]   i32类型array的引用
 ///
-/// struct,enum
+/// * 裸指针raw pointer
+///     *const T / *mut T 分别代表可变和不可变的裸指针，不可变意味着解引用后不能直接赋值，需要使用unsafe关键字，栈上空间为usize
+/// * 引用reference
+///     &T / &mut T 内存对齐的指向T的有效的值指针，表示对该T元素的借用，栈上空间为usize
+/// * Array
+///     [T; N],栈上空间为Sizeof(T)*N
+/// * String
+///     std::String，栈上空间为3*usize，ptr，len，cap
+/// * Slice
+///     &[T] / &mut [T]，栈上空间为2*usize，ptr，len
+/// * String slice
+///     &str，utf8编码的字符串，栈上空间为2*usize
+/// * Box
+///     std::Box<T, A = Global>，指向堆上数据的指针，栈上空间为usize，ptr
+/// * Vec
+///     std::Vec<T, A = Global>，栈上空间为3*usize，ptr，len，cap
+///
 ///
 /// == 等于 PartialEq，Eq 2个trait，前者不满足自反性，即x==x，仅满足对称性x==y则y==x和传递性x==y,y==z,则x==z
 ///
@@ -57,8 +73,28 @@ pub fn study_primative_type() {
     let r2 = num.checked_add(12);
     println!("result: {} {}", r1, r2.unwrap());
 
-    let s1 = String::from("abc");
-    s1.len();
+    println!(
+        "The size of raw pointer: {}",
+        std::mem::size_of::<*const u64>()
+    ); // 8  bytes
+    println!("The size of reference: {}", std::mem::size_of::<&u64>()); // 8  bytes
+    println!("The size of slice: {}", std::mem::size_of::<&[u8]>()); // 16 bytes
+    println!("The size of box: {}", std::mem::size_of::<Box<u8>>()); // 8  bytes
+    println!(
+        "The size of box slice: {}",
+        std::mem::size_of::<Box<[u8]>>()
+    ); // 16 bytes
+    println!("The size of vec: {}", std::mem::size_of::<Vec<u8>>()); // 24 bytes
+    println!("The size of String: {}", std::mem::size_of::<String>()); // 24 bytes
+    println!("The size of string slice: {}", std::mem::size_of::<&str>()); // 16 bytes
+    println!(
+        "The size of Array[u8;3]: {}",
+        std::mem::size_of::<[u8; 3]>()
+    ); // 3 bytes
+
+    //
+    let s1 = "123";
+    let p = s1.as_ptr();
 }
 
 pub fn study_compound_type() {
@@ -95,7 +131,7 @@ pub fn study_collection_type() {
 
 fn study_string() {
     let s1: String = String::from("hello world");
-    let s2 = rust_study::first_world(&s1);
+    let s2 = basic_utils::first_world(&s1);
     println!("string is {}", s2);
 
     // 参数为&mut self,即会同时存在mut borrow和immutable borrow
@@ -213,4 +249,55 @@ fn study_slice() {
 
     let v1_slice2 = &mut v1[..];
     println!("{:?}", v1_slice2);
+}
+
+pub fn study_type_convert() {
+    // Array 转 slice &[i32]
+    let a = [72, 101, 108, 108, 111];
+    let a_slice: &[i32] = &a;
+    let b_slice = &a[..];
+
+    // Vec<u8> 转 slice &[u8], 只需要一个&符号?
+    let v: Vec<u8> = vec![72, 101, 108, 108, 111]; // "Hello"
+    let v_slice: &[u8] = &v;
+
+    // &[u8] 转 Vec<u8>
+    let v_slice: &[u8] = &[72, 101, 108, 108, 111]; // "Hello"
+    let v_vec: Vec<u8> = v_slice.to_vec(); // copy
+
+    println!("---------------");
+
+    // s: &str -> String, String::from(s)   s.to_string()    s.to_owned()
+    let s1 = "abc";
+    let s1_string = String::from(s1);
+
+    // s: &str -> &[u8],   s.as_bytes()
+    let s2 = "cde";
+    let s2_bytes = s2.as_bytes(); // copy
+
+    // s: &str -> Vec<u8> s.as_bytes().to_vec()
+    let s3 = "123";
+    let s3_vec = s3.as_bytes().to_vec(); // to_vec copy
+
+    // s: String -> &str
+    let s4 = String::from("123");
+    let s4_str = s4.as_str();
+
+    // s: String -> &[u8]
+    let s5 = String::from("135");
+    let s5_bytes = s5.as_bytes();
+
+    // s: String -> Vec<u8>
+    let s5 = String::from("123");
+    let s5_vec = s5.into_bytes(); // moved, s5不能使用
+                                  // println!("String -> Vec<u8>: {}", s5);
+
+    // s: Vec<u8> -> String
+    let s6 = [65, 66, 67].to_vec();
+    let s6_string = String::from_utf8(s6).unwrap();
+    println!("s6: {}", s6_string);
+
+    // s: Vec<u8> -> &[u8] -> &str
+    let s7: Vec<u8> = vec![68, 69, 70];
+    let s7_str = std::str::from_utf8(&s7).unwrap();
 }

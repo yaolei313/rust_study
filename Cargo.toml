@@ -1,17 +1,16 @@
+[workspace]
+members = ["crates/*"]
+
 [profile.dev]
 opt-level=0
 
 [profile.release]
 opt-level=3
 
-[package]
-name = "rust_study"
-version = "0.1.0"
-edition = "2021"
-description = "a rust study project"
-license = "MIT OR Apache-2.0"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-regex = "1.4.2"
+[workspace.dependencies]
+# local crates
+basic_concept = { path = "./crates/basic_concept", version = "0.0.0" }
+basic_utils = { path = "./crates/basic_utils", version = "0.0.0" }
+hello_macro = { path = "./crates/hello_macro", version = "0.0.0" }
+hello_macro_derive = { path = "./crates/hello_macro_derive", version = "0.0.0" }
+hello_rust = { path = "./crates/hello_rust", version = "0.0.0" }

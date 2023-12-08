@@ -1,0 +1,12 @@
+[package]
+name = "basic_concept"
+version = "0.0.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+regex = "1.4.2"
+basic_utils.workspace = true
+hello_macro.workspace=true
+hello_macro_derive.workspace=true
