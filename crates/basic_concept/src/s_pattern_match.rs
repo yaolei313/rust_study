@@ -5,8 +5,12 @@
 /// 函数参数，let语句，for循环 只能接受irrefutable pattern。
 /// if let,while let 可以接受retutable pattern和irrefutable pattern。
 ///
+/// match guard是match pattern之后的一段if语句。
+///
 /// match一般都有穷尽性检查，match + match guard就没有了。
 /// if let的多层组合没有穷尽性检查
+///
+/// match中的变量屏蔽不容易看出，所以尽量使用不同的变量名
 ///
 pub fn study_pattern_match() {
     // let中的模式匹配，解构元组
@@ -121,6 +125,69 @@ pub fn study_pattern_match() {
             println!("other value {}", id)
         }
     }
+
+    // matches!宏
+    let v = vec![MyEnum::Foo, MyEnum::Bar, MyEnum::Foo];
+    // rust中的枚举不能像java一样直接使用==判断，得使用matches!宏，也就是match逻辑
+    // v.iter().filter(|x| **x == MyEnum::Foo);
+    v.iter().filter(|x| matches!(x, MyEnum::Foo));
+
+    let foo = 's';
+    assert!(matches!(foo, 'A'..='Z' | 'a'..='z'));
+    // 等同如下逻辑，可以看下matches宏定义
+    let r: bool = match foo {
+        'A'..='Z' | 'a'..='z' => true,
+        _ => false,
+    };
+    assert!(r);
+
+    // match guard
+    let t1 = Some(3);
+    assert!(matches!(t1, Some(i) if i>2));
+
+    // 匹配值的范围，比使用 1|2|3 => ... 等方便
+    let t = 3;
+    match t {
+        1..=10 => println!("less than or equal 10"),
+        _ => println!("more than 10"),
+    }
+
+    match t {
+        x if x > 0 && x < 10 => println!("range (0,10)"),
+        _ => println!("others"),
+    }
+
+    match t {
+        x if x == 1 || x == 2 => println!("1 or 2 {}", x),
+        _ => println!("others"),
+    }
+
+    // 解构数组
+    let a1 = [32, 36];
+    let [ax, ay] = a1;
+
+    let a2 = [1, 2, 3, 4, 5, 6];
+    let [a2f, ..] = a2;
+
+    let a3 = &[1, 2, 3, 4, 5, 6];
+    let [a3f, ..] = a3;
+
+    // @绑定
+    let t2 = Some(33);
+    match t2 {
+        Some(var1 @ 1..=100) => println!("val {}", var1),
+        Some(_) => println!("other"),
+        None => println!("none"),
+    };
+
+    // @绑定等同如下逻辑
+    match t2 {
+        Some(var1) if var1 >= 1 && var1 <= 100 => println!("val {}", var1),
+        Some(_) => println!("other"),
+        None => println!("none"),
+    };
+
+
 }
 
 // 模式匹配匹配元组
@@ -139,4 +206,9 @@ pub struct Point {
 
 pub enum Message {
     Hello { id: i32 },
+}
+
+enum MyEnum {
+    Foo,
+    Bar,
 }

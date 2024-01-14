@@ -76,13 +76,3 @@ fn read_username_from_file3() -> Result<String, io::Error> {
 fn last_char_of_first_line(text: &str) -> Option<char> {
     text.lines().next()?.chars().last()
 }
-
-fn largest<T: std::cmp::PartialOrd>(input: &[T]) -> &T {
-    let mut largest = &input[0];
-    for i in input {
-        if i > largest {
-            largest = i;
-        }
-    }
-    return largest;
-}

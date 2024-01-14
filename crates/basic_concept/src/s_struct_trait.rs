@@ -1,8 +1,8 @@
 ///
 /// 不能为外部struct实现外部trait，这个称为coherence 或 orphan rule规则
-/// 
-/// 
-/// 
+/// 可以通过newtype来包装某个类型，从而绕过上边的限制
+///
+///
 use std::{
     fmt::{Debug, Display},
     time::SystemTime,
@@ -13,6 +13,8 @@ use std::{
  * classic struct
  * tuple struct 使用序号访问字段，从0开始
  * unit-like struct 实现trait使用，但不需要存储
+ *
+ * 若在结构体中使用引用类型，必须增加生命周期
  */
 // Classic struct with name field
 #[derive(Debug)]

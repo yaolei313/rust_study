@@ -22,6 +22,18 @@ pub fn add(a: i32, b: i32) -> i32 {
     a + b
 }
 
+pub fn largest<T: PartialOrd>(list: &[T]) -> &T {
+    let mut largest = &list[0];
+
+    for item in list.iter() {
+        if item > largest {
+            largest = item;
+        }
+    }
+
+    largest
+}
+
 ///
 /// return first world of &str
 ///

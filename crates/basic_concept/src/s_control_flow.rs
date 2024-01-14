@@ -1,3 +1,31 @@
+/// rust中遍历使用for in 更高效，避免了bounds checking
+/// 
+/// for循环，转移所有权
+/// ```
+/// for item in collection {
+/// }
+/// ```
+/// 等价 for item in IntoIterator::into_iter(collection)
+///
+///
+/// for循环，不可变借用
+/// ```
+/// for item in &collection {
+///    ...
+/// }
+/// ```
+/// 等价 for item in collection.iter()
+///
+/// for循环，可变借用
+/// ```
+/// for item in &mut collection {
+///    ...
+/// }
+/// ```
+/// 等价 for item in collection.mut_iter()
+///
+///
+///
 pub fn study_condition_expression() {
     // if可以是表达式，所有分支必须返回相同类型
     let miles = 100;

@@ -35,5 +35,6 @@ pub fn study_basic_concept() {
     s_closure::study_closure();
 
     s_iter::study_iter();
-}
 
+    s_macro::study_macro();
+}

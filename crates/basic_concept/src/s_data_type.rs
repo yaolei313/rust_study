@@ -10,7 +10,8 @@ const NAME: &str = "我没啥优点，就是活得久，嘿嘿";
 /// 和const相比，不会inline；且是可变的mut；多线程访问的话，不安全；必须实现Sync trait；定义时必须赋值且编译期就可以确定值；名称也是必须大写。
 static NAME2: &str = "hello world";
 
-/// #基本类型
+///
+/// #基本类型，所有基本类型都实现了copy trait，会自动被copy
 ///
 /// integer type:
 /// i8       u8            u8字面量b'A'
@@ -30,15 +31,16 @@ static NAME2: &str = "hello world";
 /// char     使用单引号，21位，但宽度会被填充至32位, 4字节代表一个unicode字符,U+0000,U+D7FF,U+E000~U+10FFFF
 ///
 /// compound type:
-/// tuple    ()
+/// tuple    ()  仅包含实现了copy trait的tuple，array也是可以copy的类型
 /// array    []
 ///
 /// collection type:
 /// Vec<>
 /// String  堆上分配内存，s[start..endExclude] to slice
 /// HashMap<>
+/// Range   序列只允许数字或者字符类型，因为它们是连续的，比如 0..4 范围不包括4,  0..=4 范围包括4
 ///
-/// slice type:(slice类型，没有对象所有权)
+/// slice type:(slice类型，没有对象所有权，也是可以copy的类型)  
 /// &str     字符串字面量，不可变。字符串对象，可变。
 /// &[i32]   i32类型array的引用
 ///
@@ -68,10 +70,22 @@ static NAME2: &str = "hello world";
 /// rust编译的最小代码单元是crate，crate root是一个source file。分别为src/lib.rs,src/main.rs
 ////
 pub fn study_primative_type() {
-    let num: u32 = "313".parse().expect("not a number");
+    // 前者使用显示的类型标注，后者直接制定泛型类型
+    let num: i8 = "127".parse().expect("not a number");
+    let num2 = "312".parse::<i32>().expect("not a number");
+    println!("num {num} {num2}");
+    // wrapping_* 补码循环溢出
+    // checked_* 发生溢出，返回NONE值
+    // overflowing_* 返回值和一个bool值指示是否溢出
+    // saturating_* 值只能到最大值或者最小值
     let r1 = num.wrapping_add(10);
-    let r2 = num.checked_add(12);
-    println!("result: {} {}", r1, r2.unwrap());
+    let r2 = num.checked_add(10);
+    let (r3, over) = num.overflowing_add(10);
+    let r4 = num.saturating_add(10);
+    println!("result: {} {} {} {} {}", r1, r2.unwrap(), r3, over, r4);
+
+    let n1 = 10 / 3;
+    println!("div result: {}", n1);
 
     println!(
         "The size of raw pointer: {}",
@@ -95,6 +109,9 @@ pub fn study_primative_type() {
     //
     let s1 = "123";
     let p = s1.as_ptr();
+
+    let t1 = b"hello world";
+    let b1 = t1.starts_with(b"hello");
 }
 
 pub fn study_compound_type() {
@@ -282,6 +299,7 @@ pub fn study_type_convert() {
     // s: String -> &str
     let s4 = String::from("123");
     let s4_str = s4.as_str();
+    let s4_str1 = &s4[..];
 
     // s: String -> &[u8]
     let s5 = String::from("135");
@@ -300,4 +318,36 @@ pub fn study_type_convert() {
     // s: Vec<u8> -> &[u8] -> &str
     let s7: Vec<u8> = vec![68, 69, 70];
     let s7_str = std::str::from_utf8(&s7).unwrap();
+
+    study_enum_convert();
+}
+
+pub fn study_enum_convert() {
+    let v = TestEnum::A as i32;
+    println!("enum to int {}", v);
+
+    let e: TestEnum = v.try_into().expect("convert fail");
+    // 可以通过泛型为所有类型实现某个trait。TryInto trait就是。相当于如下代码。
+    let e2 = TestEnum::try_from(v).expect("convert fail");
+    println!("int to enum {:?} {:?}", e, e2);
+}
+
+#[derive(Debug)]
+enum TestEnum {
+    A,
+    B,
+    C,
+}
+
+impl TryFrom<i32> for TestEnum {
+    type Error = ();
+
+    fn try_from(value: i32) -> Result<Self, Self::Error> {
+        match value {
+            x if x == TestEnum::A as i32 => Ok(TestEnum::A),
+            y if y == TestEnum::B as i32 => Ok(TestEnum::B),
+            z if z == TestEnum::C as i32 => Ok(TestEnum::C),
+            _ => Err(()),
+        }
+    }
 }

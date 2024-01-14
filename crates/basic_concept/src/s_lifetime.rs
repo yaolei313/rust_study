@@ -1,6 +1,9 @@
 ///
 /// #ownership规则
-/// * 每个value都有一个owner
+/// each value in rust has a owner
+/// there can only be one owner at a time
+/// when the owner goes out of scope, the value will be dropped
+/// * 每个value都有一个owner  
 /// * value在任意时刻只能有一个owner
 /// * 当owner离开作用域，value将会被drop
 ///
