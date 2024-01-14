@@ -17,8 +17,10 @@ pub use converter::convert_to_i32;
 /// assert_eq!(3, sum1);
 ///
 /// ```
+/// 
+/// Output是associated type，可以在泛型声明处制定
 ///
-pub fn add(a: i32, b: i32) -> i32 {
+pub fn add<T: std::ops::Add<T, Output = T>>(a: T, b: T) -> T {
     a + b
 }
 

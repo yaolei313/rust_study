@@ -1,3 +1,5 @@
+use std::fmt::{Debug, Display};
+
 ///
 /// 泛型是在编译时执行static dispatch，也就是单态化，为每个被泛型替代的具体类型生成非泛型实现。
 /// dyn trait是运行时执行dynamic dispatch，在运行时确定调用的代码。
@@ -54,5 +56,18 @@ pub fn study_genericity() {
         y: 4.0 as f32,
     };
     println!("distance: {}", p2.distance_from_origin());
+
+    let a1 = [12; 5];
+    let a2 = [1, 2, 3, 4, 5, 6, 7];
+    display_array2(a1);
+    display_array2(a2);
 }
 
+pub fn display_array<T: Display + Debug>(t: &[T]) {
+    println!("{:?}", t);
+}
+
+// const针对值的泛型
+pub fn display_array2<T: Debug, const N: usize>(t: [T; N]) {
+    println!("{:?}", t);
+}
