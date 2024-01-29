@@ -8,6 +8,7 @@ pub mod s_lifetime;
 pub mod s_macro;
 pub mod s_option_result;
 pub mod s_pattern_match;
+pub mod s_pointer;
 pub mod s_smart_pointer;
 pub mod s_struct_trait;
 pub mod s_thread;

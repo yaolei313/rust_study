@@ -2,7 +2,7 @@ use std::{
     cell::RefCell,
     fmt::Debug,
     mem,
-    ops::Deref,
+    ops::{Deref, DerefMut},
     rc::{Rc, Weak},
     sync::Arc,
 };
@@ -24,19 +24,20 @@ use basic_utils::data_struct::BinaryTreeNode;
 /// 在调用函数或方法时，若实参和形参不同，且实参是实现了Deref trait类型的引用时，则编译时自动增加转换代码
 /// T: Deref(target = U) , &T -> &U 或 &mut T -> &U
 /// T: DerefMut(target = U) , &mut T -> &mut U
+/// 只建议给自定义的智能指针实现Deref特征
 ///
 /// # Rc<T>
-/// 引用计数智能指针，单线程环境使用。
+/// 引用计数智能指针，单线程环境使用。不可变引用。可以结合Cell或RefCell实现可变性。
 /// Rc::new 会move ownership进入Rc，每次调用Rc::clone都会增加引用计数，离开作用域时减少引用计数
 ///
 /// #Arc<T>
-/// 多线程场景使用
+/// 多线程场景使用，不可变引用。可以结合Cell或RefCell实现可变性。
 ///
-/// # Cell<T>
-/// 是不可变引用时，也可以修改内部的值，只能用于Copy trait类型
+/// # Cell<T> [std::cell::Cell]
+/// 内部可变性（不可变引用时，也可以修改内部的值），只能用于Copy trait类型
 ///
-/// # RefCell<T>
-/// 当RefCell是不可变引用时，也可以修改RefCell内部的值，只能用于非Copy trait类型
+/// # RefCell<T> [std::cell::RefCell]
+/// 内部可变性（不可变引用时，也可以修改RefCell内部的值），只能用于非Copy trait类型
 /// 运行期间执行可变借用检查，单线程环境使用
 /// borrow返回Ref<T>,borrow_mut返回MutRef<T>.这2个类型均实现Deref，可以当做普通引用使用。
 /// RefCell记录了不可变引用，可变引用的数量。从而允许在任意时刻只有一个可变引用或多个不可变引用。
@@ -55,6 +56,9 @@ pub fn study_smart_point() {
     // allocate on heap and perform a copy of the slice and its contents
     let box2: Box<[i32]> = Box::from(s);
     println!("{:?}", box2);
+
+    let str = String::from("hello");
+    let str2: &'static str = Box::leak(str.into_boxed_str());
 
     // Box实现了Deref，可以当做常规引用对待。这里用MyBox模拟。
     let z = MyBox::new(5);
@@ -184,6 +188,12 @@ impl<T: Debug> Deref for MyBox<T> {
 
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+impl<T: Debug> DerefMut for MyBox<T> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
     }
 }
 

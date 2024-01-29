@@ -8,19 +8,19 @@ use std::{
 const RESOURCES_PATH: &str = "resources/";
 
 fn main() {
-    let dir = std::env::current_dir().expect("get cwd fail");
-    println!("dir: {}", dir.as_path().display());
-    let pool = ThreadPool::new(4);
+    //     let dir = std::env::current_dir().expect("get cwd fail");
+    //     println!("dir: {}", dir.as_path().display());
+    //     let pool = ThreadPool::new(4);
 
-    let listener = TcpListener::bind("127.0.0.1:8080").expect("bind :8080 failed");
-    for stream in listener.incoming() {
-        let stream = stream.unwrap();
-        println!("connection established");
-        pool::execute(|| {
-            handle_connection(stream);
-        });
-    }
-    println!("Hello, world!");
+    //     let listener = TcpListener::bind("127.0.0.1:8080").expect("bind :8080 failed");
+    //     for stream in listener.incoming() {
+    //         let stream = stream.unwrap();
+    //         println!("connection established");
+    //         pool::execute(|| {
+    //             handle_connection(stream);
+    //         });
+    //     }
+    //     println!("Hello, world!");
 }
 
 fn handle_connection(mut stream: TcpStream) {

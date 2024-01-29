@@ -11,7 +11,7 @@
 mod authentication;
 
 use basic_concept;
-use std::io;
+use std::{error::Error, io};
 
 fn study_io() {
     let age = 30;
@@ -33,9 +33,11 @@ fn study_module() {
     user.set_password("even-more-secret");
 }
 
-fn main() {
+/// () 实现了 [std::process::Termination]
+fn main() -> Result<(), Box<dyn Error>> {
     // todo!("print this message on compile");
     basic_concept::study_basic_concept();
 
     study_module();
+    Ok(())
 }

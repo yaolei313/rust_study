@@ -1,6 +1,6 @@
 use std::{
     fs::{self, File},
-    io::{self, ErrorKind, Read},
+    io::{self, ErrorKind, Read}, error::Error,
 };
 
 pub fn study_option() {
@@ -53,9 +53,10 @@ pub fn study_result() {
     });
 }
 
-// 错误传播?操作符
-// ?可以用到返回Option类型的语句之后，若返回值是None，会立即return None，若返回值是Some，则执行unwrapped
-// ?可以用到返回Result类型的语句之后，若返回只是Err，则return Err，若返回值是Ok，会返回Ok包装的值
+/// 错误传播?操作符
+/// ?可以用到返回Option类型的语句之后，若返回值是None，会立即return None，若返回值是Some，则执行unwrap
+/// ?可以用到返回Result类型的语句之后，若返回只是Err，则return Err，若返回值是Ok，则执行unwrap获取包装的值
+/// 也可以自动调用Error的from trait完成error类型的装换
 fn read_username_from_file() -> Result<String, io::Error> {
     let mut file = File::open("username.txt")?;
     let mut username = String::new();
@@ -63,10 +64,22 @@ fn read_username_from_file() -> Result<String, io::Error> {
     Ok(username)
 }
 
-fn read_username_from_file2() -> Result<String, io::Error> {
+fn read_username_from_file2() -> Result<String, Box<dyn std::error::Error>> {
     let mut username = String::new();
     File::open("username.txt")?.read_to_string(&mut username)?;
     Ok(username)
+}
+
+fn err_convert() -> Result<File, Box<dyn Error>> {
+    let r = File::open("1.txt");
+    let f = match r {
+        Ok(f) => f,
+        Err(e) => { 
+            let n = std::convert::From::from(e);
+            return Err(n);
+        },
+    };
+    Ok(f)
 }
 
 fn read_username_from_file3() -> Result<String, io::Error> {

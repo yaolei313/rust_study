@@ -1,6 +1,41 @@
 ///
+/// impl代码块中定义的函数
+/// * 第一个参数是self, 则叫method，通过.调用
+/// * 第一个参数不是self，则叫associated function，通过::调用
+///
+/// 
+/// 
+/// trait Xxx: Yyy 实现特征Xxx时，必须也实现Yyy。supertrait
+///
 /// 不能为外部struct实现外部trait，这个称为coherence 或 orphan rule规则
 /// 可以通过newtype来包装某个类型，从而绕过上边的限制
+///
+/// trait object
+/// &dyn XxxTrait 或 Box<dyn XxxTrait>
+///
+/// 不是所有的trait都可以有trait object。有如下限制
+/// * trait的所有方法不能返回Self
+/// * trait的所有方法没有任何泛型参数
+///
+/// 完全限定语法
+/// trait Test {
+///     fn test();
+/// }
+///
+/// impl Study {
+///     fn test() {
+///     }
+/// }
+///
+/// impl Trait for Study {
+///     fn test() {
+///     }
+/// }
+///
+/// <Type as Trait>::function(receiver if method, args)
+/// 
+/// <Study as Trait>::test() 调用后者
+/// Study::test() 调用前者
 ///
 ///
 use std::{

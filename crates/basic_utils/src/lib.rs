@@ -17,11 +17,37 @@ pub use converter::convert_to_i32;
 /// assert_eq!(3, sum1);
 ///
 /// ```
-/// 
+///
+/// 常见的文档标题还包含如下标题
+/// # Panics
+///
+/// # Errors
+///
+/// # Safety
+///
 /// Output是associated type，可以在泛型声明处制定
 ///
-pub fn add<T: std::ops::Add<T, Output = T>>(a: T, b: T) -> T {
+pub fn add<T: std::ops::Add<Output = T>>(a: T, b: T) -> T {
     a + b
+}
+
+/// # Panics
+///
+///
+/// ```rust,should_panic
+/// # // 使用#开头的行会在文档中被隐藏起来，但是依然会在文档测试中运行
+/// # // panics on devision by zero
+/// # let r = basic_utils::device(10,0);
+/// ```
+pub fn devide(a: i32, b: i32) -> i32 {
+    a / b
+}
+
+/// []支持文档跳转
+/// `add_one` return [Option] type
+pub fn add_one(t: i32) -> Option<i32> {
+    let r = t + 1;
+    Some(r)
 }
 
 pub fn largest<T: PartialOrd>(list: &[T]) -> &T {

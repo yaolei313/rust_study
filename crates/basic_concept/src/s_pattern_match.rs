@@ -130,7 +130,7 @@ pub fn study_pattern_match() {
     let v = vec![MyEnum::Foo, MyEnum::Bar, MyEnum::Foo];
     // rust中的枚举不能像java一样直接使用==判断，得使用matches!宏，也就是match逻辑
     // v.iter().filter(|x| **x == MyEnum::Foo);
-    v.iter().filter(|x| matches!(x, MyEnum::Foo));
+    let v2 = v.iter().filter(|x| matches!(x, MyEnum::Foo));
 
     let foo = 's';
     assert!(matches!(foo, 'A'..='Z' | 'a'..='z'));
@@ -186,8 +186,6 @@ pub fn study_pattern_match() {
         Some(_) => println!("other"),
         None => println!("none"),
     };
-
-
 }
 
 // 模式匹配匹配元组

@@ -1,4 +1,8 @@
-use std::fmt::{Debug, Display};
+use std::ops::Add;
+use std::{
+    fmt::{Debug, Display},
+    process::Output,
+};
 
 ///
 /// 泛型是在编译时执行static dispatch，也就是单态化，为每个被泛型替代的具体类型生成非泛型实现。
@@ -29,6 +33,20 @@ impl<T> Point<T> {
 
     fn get_y(&self) -> &T {
         &self.y
+    }
+}
+
+impl<T> Add for Point<T>
+where
+    T: Add<Output = T>,
+{
+    type Output = Point<T>;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Point {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
     }
 }
 

@@ -1,3 +1,4 @@
+/// [IntoIterator]
 pub fn study_iter() {
     let mut v1 = vec![1, 2, 3];
     // 不可变引用
@@ -42,4 +43,8 @@ pub fn study_iter() {
     // fold
     let sum = v5.iter().fold(0, |acc, x| acc + x);
     println!("sum is {}", sum);
+
+    let a6 = [10;5];
+    let sum1:i32 = a6.iter().sum();
+    Iterator::sum::<i32>(a6.iter());
 }

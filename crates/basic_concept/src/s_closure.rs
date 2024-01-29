@@ -10,7 +10,7 @@ pub fn study_closure() {
     // fn add_one_v1(x: u32) -> u32 {
     //     x + 1
     // }
-    let add_one_v2 = |x: u32| -> u32 { x + 1 };
+    let add_one_v2 = |x: i32| -> i32 { x + 1 };
     let add_one_v3 = |x| x + 1;
 
     // 调用closure是能编译的必要条件，不然编译器没法推断类型。
@@ -50,14 +50,14 @@ fn move_owner() {
         .unwrap();
 }
 
+/// 一旦closure捕获了reference或者value(ownership)，closure body能做如下操作，move a captured value out of the closure, mutate captured value, 什么也不做
+/// trait指定了struct或function能使用哪种closure。closure会依赖body中如何处理捕获的值，自动实现Fn trait。
+///
+/// 1.[FnOnce] 只能被调用一次的闭包，所有的闭包都至少实现了这个trait。若a closure that moves captured value out of its body will only implement FnOnce trait.
+/// 2.[FnMut]:[FnOnce]  不会将所有权move出闭包体的闭包，但可能会修改对应的值。可以被多次调用。
+/// 3.[Fn]:[FnMut]     不move out，不修改捕获的引用或变了。可以被多次调用。
+/// 以上3种trait只是区分如何使用捕获的reference或value(move),不影响捕获逻辑
 fn study_fn_trait() {
-    // 一旦closure捕获了reference或者ownership，closure body能做如下操作，move a captured value out of the closure, mutate captured value, 什么也不做
-    // trait指定了struct或function能使用哪种closure。closure会依赖body中如何处理捕获的值，自动实现Fn trait。
-
-    // 1.FnOnce 只能被调用一次的闭包，所有的闭包都至少实现了这个trait。若a closure that moves captured value out of its body will only implement FnOnce trait.
-    // 2.FnMut 不会将所有权move出闭包体的闭包，但可能会修改对应的值。这个闭包可以被多次调用。
-    // 3.Fn 不move out，不修改，不需要捕获任何变量
-
     // 1.若不需要捕获任何变量，可以直接使用函数名而不是闭包，比如
     let input = Some(vec![1, 2, 3]);
     unwrap_or_else(input, Vec::new);
@@ -111,11 +111,24 @@ where
     }
 }
 
+fn test2<T, F>(f: F, p: u32) -> T
+where
+    F: FnOnce(u32) -> T,
+{
+    f(p)
+}
+
 // 必须声明'a，不然会提示mismatched type
-fn exec<'a, F: FnMut(&'a str)>(input: &'a str, mut f: F) {
+fn exec<'a, F>(input: &'a str, mut f: F)
+where
+    F: FnMut(&'a str) -> (),
+{
     f(input)
 }
 
-fn exec2<F: FnMut(&str)>(input: &str, mut f: F) {
+fn exec2<F>(input: &str, mut f: F)
+where
+    F: FnMut(&str) -> (),
+{
     f(input)
 }

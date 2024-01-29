@@ -1,10 +1,11 @@
-use std::collections::HashMap;
+use ahash::{AHasher, RandomState};
+use std::{collections::HashMap, fmt::Display};
 
 use basic_utils;
 
 /// #const常量
 /// 和let相比
-/// 定义时必须赋值；必须指定类型;名称全部大写;定义时必须赋值且编译期就可以确定值;可以在任意作用域定义，其生命周期等同整个程序的生命周期，编译器会尽可能内敛代码。
+/// 定义时必须赋值；必须指定类型;名称全部大写;定义时必须赋值且编译期就可以确定值;可以在任意作用域定义，其生命周期等同整个程序的生命周期，编译器会尽可能内联代码。
 const NAME: &str = "我没啥优点，就是活得久，嘿嘿";
 /// static全局变量
 /// 和const相比，不会inline；且是可变的mut；多线程访问的话，不安全；必须实现Sync trait；定义时必须赋值且编译期就可以确定值；名称也是必须大写。
@@ -16,7 +17,7 @@ static NAME2: &str = "hello world";
 /// integer type:
 /// i8       u8            u8字面量b'A'
 /// i16      u16
-/// i32      u32
+/// i32      u32           整数默认类型i32
 /// i64      u64
 /// i128     u128
 /// isize    usize  isize 和 usize 类型取决于运行程序的计算机的类型。 在64位体系结构上使用64位类型，在32位上使用32位类型。 如果未指定整数的类型，并且系统无法推断类型，则默认情况下，系统会分配 i32 类型
@@ -32,7 +33,7 @@ static NAME2: &str = "hello world";
 ///
 /// compound type:
 /// tuple    ()  仅包含实现了copy trait的tuple，array也是可以copy的类型
-/// array    []
+/// array    []  [std::ops::Index] trait
 ///
 /// collection type:
 /// Vec<>
@@ -53,6 +54,8 @@ static NAME2: &str = "hello world";
 /// * String
 ///     std::String，栈上空间为3*usize，ptr，len，cap
 /// * Slice
+///     str [T] 所有切片类型都是unsize type。unsizetype除此外还包括dyn trait，无法直接使用，必须通过引用和Box<>来使用  
+/// * Slice Reference
 ///     &[T] / &mut [T]，栈上空间为2*usize，ptr，len
 /// * String slice
 ///     &str，utf8编码的字符串，栈上空间为2*usize
@@ -121,7 +124,7 @@ pub fn study_compound_type() {
     let t3 = (1, 2, 3);
     println!("tuple is {} {} {}", t3.0, t3.1, t3.2);
 
-    // array，数组长度不可变
+    // array，数组长度不可变。可以通过[1,1,1]或[1;3]创建
     let array_1 = ["a", "b", "c"];
 
     // 访问array的下标是usize类型，需要使用as做类型转换
@@ -219,12 +222,19 @@ fn study_vec() {
     assert_eq!(v2, &[1, 2]);
     assert_eq!(v3, &[3, 4, 5, 6]);
     println!("v2 {:?} v3 {:?}", v2, v3);
+
+    let mut v4 = [11, 22, 33].to_vec();
+    let v5 = v4.split_off(1);
 }
 
 fn study_map() {
     let mut name_map: HashMap<&str, &str> = HashMap::new();
     name_map.insert("abc", "1");
     name_map.insert("Programming in Rust", "Great examples.");
+
+    for (k, v) in &name_map {
+        println!("{k}: {v}");
+    }
 
     let desc = name_map.get("Programming in Rust");
     println!("desc: {:?}", desc);
@@ -245,6 +255,10 @@ fn study_map() {
         *count += 1;
     }
     println!("count map {:?}", count_map);
+
+    // rust默认使用安全hash算法，性能会差一些
+    let mut map: HashMap<i32, i32, RandomState> = HashMap::default();
+    map.insert(1, 123);
 }
 
 fn study_slice() {
@@ -329,7 +343,7 @@ pub fn study_enum_convert() {
     let e: TestEnum = v.try_into().expect("convert fail");
     // 可以通过泛型为所有类型实现某个trait。TryInto trait就是。相当于如下代码。
     let e2 = TestEnum::try_from(v).expect("convert fail");
-    println!("int to enum {:?} {:?}", e, e2);
+    println!("int to enum {0} {0:?} {1:?}", e, e2);
 }
 
 #[derive(Debug)]
@@ -348,6 +362,16 @@ impl TryFrom<i32> for TestEnum {
             y if y == TestEnum::B as i32 => Ok(TestEnum::B),
             z if z == TestEnum::C as i32 => Ok(TestEnum::C),
             _ => Err(()),
+        }
+    }
+}
+
+impl Display for TestEnum {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            TestEnum::A => write!(f, "TestEnum-A"),
+            TestEnum::B => write!(f, "TestEnum-B"),
+            TestEnum::C => write!(f, "TestEnum-C"),
         }
     }
 }
