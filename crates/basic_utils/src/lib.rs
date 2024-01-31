@@ -101,6 +101,11 @@ pub mod converter {
 pub mod data_struct {
     use std::{cell::RefCell, rc::Rc};
 
+    pub struct ListNode<T> {
+        val: T,
+        next: Option<Rc<RefCell<ListNode<T>>>>,
+    }
+
     #[derive(Debug, PartialEq, Eq)]
     pub struct BinaryTreeNode {
         pub left: Option<Rc<RefCell<BinaryTreeNode>>>,

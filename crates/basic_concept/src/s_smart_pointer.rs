@@ -27,22 +27,22 @@ use basic_utils::data_struct::BinaryTreeNode;
 /// 只建议给自定义的智能指针实现Deref特征
 ///
 /// # Rc<T>
-/// 引用计数智能指针，单线程环境使用。不可变引用。可以结合Cell或RefCell实现可变性。
+/// 引用计数智能指针，单线程环境使用。不可变引用。可以RefCell实现内部可变性。
 /// Rc::new 会move ownership进入Rc，每次调用Rc::clone都会增加引用计数，离开作用域时减少引用计数
 ///
-/// #Arc<T>
-/// 多线程场景使用，不可变引用。可以结合Cell或RefCell实现可变性。
+/// # Arc<T> [std::sync::Arc]
+/// 多线程场景使用，不可变引用。可以RefCell实现内部可变性。
 ///
 /// # Cell<T> [std::cell::Cell]
-/// 内部可变性（不可变引用时，也可以修改内部的值），只能用于Copy trait类型
+/// interior mutability内部可变性（不可变引用时，也可以修改内部的值）较少使用，仅限于copy成本低的value。
 ///
 /// # RefCell<T> [std::cell::RefCell]
-/// 内部可变性（不可变引用时，也可以修改RefCell内部的值），只能用于非Copy trait类型
+/// interior mutability内部可变性（不可变引用时，也可以修改内部的值），运行时执行借用检查。
 /// 运行期间执行可变借用检查，单线程环境使用
 /// borrow返回Ref<T>,borrow_mut返回MutRef<T>.这2个类型均实现Deref，可以当做普通引用使用。
 /// RefCell记录了不可变引用，可变引用的数量。从而允许在任意时刻只有一个可变引用或多个不可变引用。
 ///
-///
+/// # OnceCell<T> [std::cell::OnceCell] 单线程环境使用
 ///
 /// Rc<T> 允许有多个所有者。Box<T> RefCell<T> 只允许单个所有者
 ///

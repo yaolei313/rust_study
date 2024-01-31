@@ -95,14 +95,7 @@ mod test {
         println!("{:?}", t1);
     }
 
-    #[test]
-    fn test7() {
-        let c = Cell::new("asdf");
-        let one = c.get();
-        c.set("qwer");
-        let two = c.get();
-        println!("{}, {}", one, two);
-    }
+    
 
     // data_type_test.rs(103, 34): first mutable borrow occurs here
     // data_type_test.rs(98, 21): lifetime `'m` defined here

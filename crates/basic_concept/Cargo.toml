@@ -13,3 +13,4 @@ rand = "0.8.3"
 basic_utils.workspace = true
 hello_macro.workspace=true
 hello_macro_derive.workspace=true
+thread_local = "1.1.7"

@@ -2,19 +2,30 @@
 /// 竞态条件 race condition 事件的时序影响一段代码的正确性时，比如多个线程转账，账号A余额100，线程T1转出50，线程T2转出70。
 /// 数据竞争 data race 一个线程读取一个可变数据时，另一个线程正在修改数据，若不同步，可能产生读写误差。
 use std::{
+    cell::RefCell,
     sync::{mpsc, Arc, Mutex},
     thread,
     time::Duration,
 };
 
+thread_local! {
+    static CONTEXT: RefCell<i32> = RefCell::new(1);
+}
+
 pub fn study_thread() {
     let t1 = thread::spawn(|| {
         for i in 1..10 {
+            CONTEXT.with(|t| *t.borrow_mut() = i);
             println!("number from the spawned thre'ad. {}", i);
             thread::sleep(Duration::from_millis(10));
         }
     });
     t1.join().unwrap();
+
+    let val = CONTEXT.with(|t| *t.borrow());
+    println!("thread local {}", val);
+
+    CONTEXT.with(move |t| println!("val: {}", *t.borrow()));
 
     let v = vec![1, 2, 3];
     // move可以强制闭包获取其所使用环境的所有权
