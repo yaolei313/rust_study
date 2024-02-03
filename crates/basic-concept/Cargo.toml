@@ -1,6 +1,6 @@
 [package]
-name = "basic_concept"
-version = "0.0.0"
+name = "basic-concept"
+version.workspace = true
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -10,7 +10,7 @@ regex = "1.4.2"
 num = "0.4.0"
 ahash = "0.8.7"
 rand = "0.8.3"
-basic_utils.workspace = true
-hello_macro.workspace=true
-hello_macro_derive.workspace=true
+basic-utils.workspace = true
+hello-macro.workspace = true
+hello-macro-derive.workspace = true
 thread_local = "1.1.7"

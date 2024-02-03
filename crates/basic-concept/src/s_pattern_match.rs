@@ -198,8 +198,8 @@ fn test_patter_param2((x, y): (i32, i32)) {
 }
 
 pub struct Point {
-    x: i32,
-    y: i32,
+    pub x: i32,
+    pub y: i32,
 }
 
 pub enum Message {

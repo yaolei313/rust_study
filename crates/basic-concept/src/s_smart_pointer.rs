@@ -26,7 +26,7 @@ use basic_utils::data_struct::BinaryTreeNode;
 /// T: DerefMut(target = U) , &mut T -> &mut U
 /// 只建议给自定义的智能指针实现Deref特征
 ///
-/// # Rc<T>
+/// # Rc<T> [std::rc::Rc]
 /// 引用计数智能指针，单线程环境使用。不可变引用。可以RefCell实现内部可变性。
 /// Rc::new 会move ownership进入Rc，每次调用Rc::clone都会增加引用计数，离开作用域时减少引用计数
 ///
@@ -34,7 +34,13 @@ use basic_utils::data_struct::BinaryTreeNode;
 /// 多线程场景使用，不可变引用。可以RefCell实现内部可变性。
 ///
 /// # Cell<T> [std::cell::Cell]
-/// interior mutability内部可变性（不可变引用时，也可以修改内部的值）较少使用，仅限于copy成本低的value。
+/// interior mutability内部可变性（不可变引用时，也可以修改内部的值）
+/// 不能获取内部T的可变引用，可以set或replace其中T的值（move in或者move out）
+/// T:Copy  get 返回数据的copy副本
+/// T:Default take 用Default值替换
+/// T   replace
+///     into_inner  move out
+///     set    替换内部值，drop旧值
 ///
 /// # RefCell<T> [std::cell::RefCell]
 /// interior mutability内部可变性（不可变引用时，也可以修改内部的值），运行时执行借用检查。

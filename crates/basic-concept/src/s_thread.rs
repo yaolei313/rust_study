@@ -1,12 +1,19 @@
 ///
 /// 竞态条件 race condition 事件的时序影响一段代码的正确性时，比如多个线程转账，账号A余额100，线程T1转出50，线程T2转出70。
 /// 数据竞争 data race 一个线程读取一个可变数据时，另一个线程正在修改数据，若不同步，可能产生读写误差。
+///
+/// 默认channel是multi producer single consumer
+/// 若需要mpmc，可以使用crossbeam和flume库
+///
 use std::{
-    cell::RefCell,
+    cell::{Cell, RefCell},
+    ops::Deref,
     sync::{mpsc, Arc, Mutex},
     thread,
     time::Duration,
 };
+
+use thread_local::ThreadLocal;
 
 thread_local! {
     static CONTEXT: RefCell<i32> = RefCell::new(1);
@@ -38,6 +45,8 @@ pub fn study_thread() {
     study_channel();
 
     study_mutex();
+
+    study_thread_local();
 }
 
 fn study_channel() {
@@ -81,6 +90,40 @@ fn study_channel() {
     }
 }
 
+pub fn study_sync_channel() {
+    let (tx, rx) = mpsc::sync_channel::<String>(0);
+    thread::spawn(move || {
+        println!("waiting send");
+        tx.send(String::from("hello"));
+        println!("send finished.");
+    });
+
+    println!("睡眠之前");
+    // thread::sleep(Duration::from_secs(5));
+    println!("睡眠之后");
+
+    println!("waiting receive");
+    let v = rx.recv().unwrap();
+    println!("receive {}", v);
+}
+
+pub fn study_channel2() {
+    let (tx, rx) = mpsc::channel::<String>();
+    for i in 0..6 {
+        let ts = tx.clone();
+        thread::spawn(move || {
+            ts.send(format!("hello {}", i)).unwrap();
+        });
+    }
+    // channel关闭有2个条件，sender全部关闭或receiver全部关闭。这里会导致tx一直未被drop，所以一直会卡在receive这里。
+    drop(tx);
+
+    for s in rx {
+        println!("receive {}", s);
+    }
+    println!("end");
+}
+
 fn study_mutex() {
     let v = vec![1, 2, 3];
     let m = Mutex::new(v);
@@ -105,4 +148,23 @@ fn study_mutex() {
         h.join().unwrap();
     }
     println!("counter: {}", *counter.lock().unwrap());
+}
+
+static NAME3: &str = "hello world";
+
+pub fn study_thread_local() {
+    for i in 0..4 {
+        let tls = ThreadLocal::new();
+        thread::spawn(move || {
+            println!("static {}", NAME3);
+            // RefCell是同一个值该来该去，Cell是多个值替换
+            let tval = tls.get_or(|| RefCell::new(0));
+            let mut t = tval.borrow_mut();
+            println!("before val {} add {}", *t, i);
+            *t += i;
+            println!("after val {}", *t);
+        })
+        .join()
+        .expect("wait thread finish error");
+    }
 }

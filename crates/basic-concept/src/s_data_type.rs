@@ -3,12 +3,14 @@ use std::{collections::HashMap, fmt::Display};
 
 use basic_utils;
 
+use crate::s_pattern_match::Point;
+
 /// #const常量
 /// 和let相比
 /// 定义时必须赋值；必须指定类型;名称全部大写;定义时必须赋值且编译期就可以确定值;可以在任意作用域定义，其生命周期等同整个程序的生命周期，编译器会尽可能内联代码。
 const NAME: &str = "我没啥优点，就是活得久，嘿嘿";
 /// static全局变量
-/// 和const相比，不会inline；且是可变的mut；多线程访问的话，不安全；必须实现Sync trait；定义时必须赋值且编译期就可以确定值；名称也是必须大写。
+/// 和const相比，不会inline；且可以是可变的mut；多线程访问的话，不安全；必须实现Sync trait；定义时必须赋值且编译期就可以确定值；名称也是必须大写。
 static NAME2: &str = "hello world";
 
 ///
@@ -127,9 +129,11 @@ pub fn study_compound_type() {
     // array，数组长度不可变。可以通过[1,1,1]或[1;3]创建
     let array_1 = ["a", "b", "c"];
 
+    let obj_array = [Point { x: 1, y: 2 }];
+
     // 访问array的下标是usize类型，需要使用as做类型转换
     let number: i32 = 1;
-    let idx = number as usize;
+    let idx: usize = number as usize;
     println!("array idx need usize type {}", array_1[idx]);
 
     let mut array_2: [i32; 5] = [0; 5];
