@@ -1,6 +1,7 @@
 use std::{
+    error::Error,
     fs::{self, File},
-    io::{self, ErrorKind, Read}, error::Error,
+    io::{self, ErrorKind, Read},
 };
 
 pub fn study_option() {
@@ -74,10 +75,10 @@ fn err_convert() -> Result<File, Box<dyn Error>> {
     let r = File::open("1.txt");
     let f = match r {
         Ok(f) => f,
-        Err(e) => { 
+        Err(e) => {
             let n = std::convert::From::from(e);
             return Err(n);
-        },
+        }
     };
     Ok(f)
 }

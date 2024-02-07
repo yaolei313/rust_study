@@ -35,11 +35,11 @@ pub mod s_others;
 /// 点操作符
 /// 以<Type as Trait>::function(receiver_if_method, next_arg, ...)为例
 /// 假设方法foo，有个接收器self，&self，&mut self，value的类型为T，那么value.foo()的逻辑如下：
-/// 
+///
 /// * 尝试匹配T::foo(value)
 /// * 尝试<&T>::foo(value) 和 <&mut T>::foo(value)
 /// * 若T实现了Deref特征，T: Deref<Target = U>，则尝试使用U类型；若T未实现Deref，但是个定长类型，则尝试将定长类型转为不定长类型，比如[T;N]转为[T]
-/// 
+///
 ///
 trait Animal {
     fn baby_name() -> String;

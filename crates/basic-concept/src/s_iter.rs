@@ -44,7 +44,7 @@ pub fn study_iter() {
     let sum = v5.iter().fold(0, |acc, x| acc + x);
     println!("sum is {}", sum);
 
-    let a6 = [10;5];
-    let sum1:i32 = a6.iter().sum();
+    let a6 = [10; 5];
+    let sum1: i32 = a6.iter().sum();
     Iterator::sum::<i32>(a6.iter());
 }

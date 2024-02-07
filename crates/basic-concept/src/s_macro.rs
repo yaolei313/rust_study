@@ -28,7 +28,7 @@ pub fn study_macro() {
 }
 
 /// 声明宏
-/// 
+///
 /// macro_rules！ 开始定义宏，宏名称不带！，使用的时候才带！
 #[macro_export]
 macro_rules! myvec {

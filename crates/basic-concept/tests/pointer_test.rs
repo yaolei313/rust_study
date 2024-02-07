@@ -1,6 +1,9 @@
 #[cfg(test)]
 mod test {
-    use std::{cell::{Cell, OnceCell}, thread};
+    use std::{
+        cell::{Cell, OnceCell},
+        thread,
+    };
 
     use basic_concept::s_pointer;
 
@@ -45,5 +48,4 @@ mod test {
         let v = c.get().expect("get value fail");
         println!("{}", v);
     }
-
 }

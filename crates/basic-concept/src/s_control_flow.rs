@@ -1,5 +1,5 @@
 /// rust中遍历使用for in 更高效，避免了bounds checking
-/// 
+///
 /// for循环，转移所有权
 /// ```
 /// for item in collection {

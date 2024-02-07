@@ -1,8 +1,8 @@
 //!
 //! # study unsafe-rust
-//! 
+//!
 //! unsafe代码块，没有内存安全保证的代码
-//! 
+//!
 //! unsafe代码块的作用如下：
 //! * 解引用裸指针 dereference a raw pointer
 //! * 调用不安全的函数或方法

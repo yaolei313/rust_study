@@ -1,8 +1,5 @@
+use std::fmt::{Debug, Display, Formatter, Result};
 use std::ops::Add;
-use std::{
-    fmt::{Debug, Display},
-    process::Output,
-};
 
 ///
 /// 泛型是在编译时执行static dispatch，也就是单态化，为每个被泛型替代的具体类型生成非泛型实现。
@@ -58,8 +55,8 @@ impl Point<f32> {
 }
 
 // 为所有泛型struct实现方法
-impl<T: std::fmt::Display> std::fmt::Display for Point<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl<T: Display> Display for Point<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         write!(f, "({} {})", self.x, self.y)
     }
 }

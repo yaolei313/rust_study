@@ -95,8 +95,6 @@ mod test {
         println!("{:?}", t1);
     }
 
-    
-
     // data_type_test.rs(103, 34): first mutable borrow occurs here
     // data_type_test.rs(98, 21): lifetime `'m` defined here
     // data_type_test.rs(105, 20): returning this value requires that `*map` is borrowed for `'m`

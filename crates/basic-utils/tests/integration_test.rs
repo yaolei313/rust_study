@@ -7,5 +7,3 @@ fn it_adds_two() {
     println!("tests dir");
     assert_eq!(4, basic_utils::add(2, 2));
 }
-
-
