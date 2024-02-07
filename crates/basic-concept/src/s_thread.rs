@@ -58,11 +58,7 @@ fn study_channel() {
     let tx1 = tx.clone();
 
     thread::spawn(move || {
-        let vals = vec![
-            String::from("hello"),
-            String::from("world"),
-            String::from("lisan"),
-        ];
+        let vals = vec![String::from("hello"), String::from("world"), String::from("lisan")];
         for val in vals {
             // val move
             tx.send(val).unwrap();
@@ -71,11 +67,7 @@ fn study_channel() {
     });
 
     thread::spawn(move || {
-        let vals = vec![
-            String::from("hello"),
-            String::from("world"),
-            String::from("lisan"),
-        ];
+        let vals = vec![String::from("hello"), String::from("world"), String::from("lisan")];
         for val in vals {
             // val move
             tx1.send(val).unwrap();

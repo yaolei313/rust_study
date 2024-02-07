@@ -160,9 +160,7 @@ pub struct Stack<T> {
 
 impl<T> Stack<T> {
     pub fn new() -> Self {
-        Stack {
-            elements: Vec::new(),
-        }
+        Stack { elements: Vec::new() }
     }
 
     pub fn push(&mut self, item: T) {

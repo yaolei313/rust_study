@@ -46,8 +46,7 @@ pub fn study_result() {
     // Result<T,E> unwrap若为Err则返回panic，expect相比可以指定错误message
     let greeting_file2 = File::open("target/hello2.txt").unwrap_or_else(|error| {
         if error.kind() == ErrorKind::NotFound {
-            File::create("target/hello2.txt")
-                .unwrap_or_else(|error| panic!("create file failed {:?}", error))
+            File::create("target/hello2.txt").unwrap_or_else(|error| panic!("create file failed {:?}", error))
         } else {
             panic!("open file failed {:?}", error)
         }

@@ -63,14 +63,8 @@ fn study_fn_trait() {
     unwrap_or_else(input, Vec::new);
 
     let mut list = [
-        s_struct_trait::Rectangle {
-            width: 10,
-            height: 1,
-        },
-        s_struct_trait::Rectangle {
-            width: 3,
-            height: 5,
-        },
+        s_struct_trait::Rectangle { width: 10, height: 1 },
+        s_struct_trait::Rectangle { width: 3, height: 5 },
     ];
     let mut count = 0;
     // pub fn sort_by_key<K, F>(&mut self, mut f: F)

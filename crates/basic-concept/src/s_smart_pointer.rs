@@ -117,16 +117,12 @@ fn study_pointer() {
     ); // --The box value in memory 0x7ffee4765ff0: 0x7fe8e9405c70
     let pboxvec = unsafe { *pbox as *const u64 };
     println!("--offset 0 {:p}, 0x{:x}", pboxvec, unsafe { *pboxvec }); // offset 0 0x7fe8e9405c70, 0x7fe8e9405c60
-    println!(
-        "--offset 1: {:p}, 0x{:x}",
-        unsafe { pboxvec.offset(1) },
-        unsafe { *(pboxvec.offset(1)) }
-    ); // --offset 1: 0x7fe8e9405c78, 0x4
-    println!(
-        "--offset 2: {:p}, 0x{:x}",
-        unsafe { pboxvec.offset(2) },
-        unsafe { *(pboxvec.offset(2)) }
-    ); // --offset 2: 0x7fe8e9405c80, 0x2
+    println!("--offset 1: {:p}, 0x{:x}", unsafe { pboxvec.offset(1) }, unsafe {
+        *(pboxvec.offset(1))
+    }); // --offset 1: 0x7fe8e9405c78, 0x4
+    println!("--offset 2: {:p}, 0x{:x}", unsafe { pboxvec.offset(2) }, unsafe {
+        *(pboxvec.offset(2))
+    }); // --offset 2: 0x7fe8e9405c80, 0x2
 
     println!("----box memory end----");
 
@@ -144,38 +140,25 @@ fn study_pointer() {
     println!("The size of slice: {}", mem::size_of_val(&slice));
     // The size of slice: 16
     let p = &slice as *const _ as *const u64;
-    println!(
-        "--The slice {:p}, in memory {:p}: 0x{:x}",
-        &slice,
-        p,
-        unsafe { *p }
-    );
+    println!("--The slice {:p}, in memory {:p}: 0x{:x}", &slice, p, unsafe { *p });
     // --The slice 0x7ffeee29e4c8, in memory 0x7ffeee29e4c8: 0x7ffeee29e47c
-    println!(
-        "--The value in memory {:p}: {}",
-        unsafe { p.offset(1) },
-        unsafe { *(p.offset(1)) }
-    );
+    println!("--The value in memory {:p}: {}", unsafe { p.offset(1) }, unsafe {
+        *(p.offset(1))
+    });
     // --The value in memory 0x7ffeee29e4d0: 2
 
     println!("The size of vec: {}", mem::size_of_val(&vec));
     // The size of vec: 24
     let p = &vec as *const _ as *const u64;
-    println!("--The vec {:p}, in memory {:p}: 0x{:x}", &vec, p, unsafe {
-        *p
-    });
+    println!("--The vec {:p}, in memory {:p}: 0x{:x}", &vec, p, unsafe { *p });
     // --The vec 0x7ffeee29e4e8, in memory 0x7ffeee29e4e8: 0x7fb9e7c05c40  pointer
-    println!(
-        "--The value in memory {:p}: {}",
-        unsafe { p.offset(1) },
-        unsafe { *(p.offset(1)) }
-    );
+    println!("--The value in memory {:p}: {}", unsafe { p.offset(1) }, unsafe {
+        *(p.offset(1))
+    });
     // --The value in memory 0x7ffeee29e4f0: 8  capacity
-    println!(
-        "--The value in memory {:p}: {}",
-        unsafe { p.offset(2) },
-        unsafe { *(p.offset(2)) }
-    );
+    println!("--The value in memory {:p}: {}", unsafe { p.offset(2) }, unsafe {
+        *(p.offset(2))
+    });
     // --The value in memory 0x7ffeee29e4f8: 5  len
 
     println!("--------");
@@ -230,11 +213,7 @@ pub fn study_rc() {
         2,
     )));
 
-    let n3 = Rc::new(RefCell::new(BinaryTreeNode::from(
-        Some(Rc::clone(&n6)),
-        None,
-        3,
-    )));
+    let n3 = Rc::new(RefCell::new(BinaryTreeNode::from(Some(Rc::clone(&n6)), None, 3)));
 
     let root = Rc::new(RefCell::new(BinaryTreeNode::from(
         Some(Rc::clone(&n2)),

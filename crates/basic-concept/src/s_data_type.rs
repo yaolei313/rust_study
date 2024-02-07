@@ -92,24 +92,15 @@ pub fn study_primative_type() {
     let n1 = 10 / 3;
     println!("div result: {}", n1);
 
-    println!(
-        "The size of raw pointer: {}",
-        std::mem::size_of::<*const u64>()
-    ); // 8  bytes
+    println!("The size of raw pointer: {}", std::mem::size_of::<*const u64>()); // 8  bytes
     println!("The size of reference: {}", std::mem::size_of::<&u64>()); // 8  bytes
     println!("The size of slice: {}", std::mem::size_of::<&[u8]>()); // 16 bytes
     println!("The size of box: {}", std::mem::size_of::<Box<u8>>()); // 8  bytes
-    println!(
-        "The size of box slice: {}",
-        std::mem::size_of::<Box<[u8]>>()
-    ); // 16 bytes
+    println!("The size of box slice: {}", std::mem::size_of::<Box<[u8]>>()); // 16 bytes
     println!("The size of vec: {}", std::mem::size_of::<Vec<u8>>()); // 24 bytes
     println!("The size of String: {}", std::mem::size_of::<String>()); // 24 bytes
     println!("The size of string slice: {}", std::mem::size_of::<&str>()); // 16 bytes
-    println!(
-        "The size of Array[u8;3]: {}",
-        std::mem::size_of::<[u8; 3]>()
-    ); // 3 bytes
+    println!("The size of Array[u8;3]: {}", std::mem::size_of::<[u8; 3]>()); // 3 bytes
 
     //
     let s1 = "123";

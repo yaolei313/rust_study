@@ -1,6 +1,7 @@
 use std::fmt;
 
 pub mod s_others;
+pub mod s_sync;
 
 ///
 /// rust不检查trait的方法是否和自身方法冲突。故调用时需要使用fully qualified syntax调用
