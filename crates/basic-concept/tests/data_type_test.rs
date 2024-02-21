@@ -74,6 +74,7 @@ mod test {
         }
     }
 
+    #[test]
     fn test5() {
         let mut p = String::from("hello");
 
@@ -85,6 +86,8 @@ mod test {
     }
 
     /// [Copy]
+    ///
+    #[test]
     fn test6() {
         let s = String::from("hello");
 
@@ -95,8 +98,11 @@ mod test {
         println!("{:?}", t1);
     }
 
-    // data_type_test.rs(103, 34): first mutable borrow occurs here
-    // data_type_test.rs(98, 21): lifetime `'m` defined here
-    // data_type_test.rs(105, 20): returning this value requires that `*map` is borrowed for `'m`
-    //
+    #[test]
+    fn test7() {
+        let s = "hello";
+        let s2 = String::from(s);
+
+        println!("s2 {} s {}", s2, s);
+    }
 }

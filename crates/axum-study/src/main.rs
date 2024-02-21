@@ -1,3 +1,4 @@
+use anyhow::Result;
 use axum::{
     extract::{Json, Path, Query},
     http::{
@@ -63,6 +64,11 @@ async fn array_headers() -> [(HeaderName, HeaderValue); 2] {
 
 async fn impl_trait() -> impl IntoResponse {
     Html("hello world")
+}
+
+async fn thing_that_might_fail() -> Result<(), anyhow::Error> {
+    // ...
+    todo!()
 }
 
 #[derive(Deserialize)]

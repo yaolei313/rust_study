@@ -5,8 +5,8 @@ use std::{sync::atomic::AtomicU32, thread};
 ///
 /// todo:
 /// https://zhuanlan.zhihu.com/p/618127949
-/// https://zhuanlan.zhihu.com/p/543559932
 /// https://zhuanlan.zhihu.com/p/669908979
+/// 
 ///
 ///
 /// https://en.cppreference.com/w/cpp/atomic/memory_order
@@ -16,11 +16,17 @@ use std::{sync::atomic::AtomicU32, thread};
 /// * initiation of side effects: 访问volatile glvalue修饰的对象，修改对象，io函数调用，或者调用任何执行这些操作的函数
 ///
 /// 线性一致性Linearizability consistency
-/// 所有线程看到的操作顺序，和全局时钟中操作的顺序一样。立即可见
+/// 在顺序一致性的基础上,增加如下限制
+/// 条件3: 不同进程的事件，如果在时间上不重叠，即不是并发事件，那么要求这个先后顺序在重排之后保持一致。 
 ///
 /// 顺序一致性Sequential consistency
-/// 一个线程的修改其它线程不一定立即可见；不同线程的写入操作，所有线程看到的顺序是一样的。
-/// A sequenced-before B：同一个线程内，语言定义的执行顺序，A定义在前，即evaluation of A将在evaluation of B之前完成
+/// 条件1: Each processor issues memory requests in the order specified by its program.
+///       每个进程执行内存访问的顺序和程序顺序一致 
+/// 条件2: Memory requests from all processors issued to an individual memory module are serviced from a single FIFO queue. 
+///       Issuing a memory request consists of entering the request on this queue. 
+///       所有进程执行内存的访问要表现得像 FIFO 一样先入先出，每次读到的都是最近写入的值
+/// 
+/// A sequenced-before B：同一个线程内，evaluation of A将在evaluation of B之前完成
 ///
 ///
 ///
