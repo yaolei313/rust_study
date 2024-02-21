@@ -6,7 +6,7 @@ use std::{sync::atomic::AtomicU32, thread};
 /// todo:
 /// https://zhuanlan.zhihu.com/p/618127949
 /// https://zhuanlan.zhihu.com/p/669908979
-/// 
+/// https://www.bilibili.com/read/cv18449397/
 ///
 ///
 /// https://en.cppreference.com/w/cpp/atomic/memory_order
