@@ -3,7 +3,8 @@
 /// * 第一个参数是self, 则叫method，通过.调用
 /// * 第一个参数不是self，则叫associated function，通过::调用
 ///
-///
+/// 另外nagative impls 可以保证对应type不会实现对应的trait
+/// https://doc.rust-lang.org/beta/unstable-book/language-features/negative-impls.html?highlight=!trait#negative_impls 
 ///
 /// trait Xxx: Yyy 实现特征Xxx时，必须也实现Yyy。supertrait
 ///
@@ -13,9 +14,15 @@
 /// trait object
 /// &dyn XxxTrait 或 Box<dyn XxxTrait>
 ///
-/// 不是所有的trait都可以有trait object。有如下限制
-/// * trait的所有方法不能返回Self
-/// * trait的所有方法没有任何泛型参数
+/// 不是所有的trait都可以有trait object，只有对象安全的才有。即有如下限制
+/// 1. trait的所有方法(method即包含self的function)不能返回Self
+/// 2. trait的所有方法没有任何泛型参数
+/// 限制1，一旦使用特征对象，若trait定义的方法返回self，此次的self编译器就不知道其具体类型了。
+/// 限制2未搞懂，泛型类型参数来说，当使用特征时其会放入具体的类型参数：此具体类型变成了实现该特征的类型的一部分。
+///      而当使用特征对象时其具体类型被抹去了，故而无从得知放入泛型参数类型到底是什么。
+/// trait GenericTrait {
+///    fn add<T>(self, a: T, b: T);  
+/// }
 ///
 /// 完全限定语法
 /// trait Test {

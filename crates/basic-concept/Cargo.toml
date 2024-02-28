@@ -14,3 +14,4 @@ basic-utils.workspace = true
 hello-macro.workspace = true
 hello-macro-derive.workspace = true
 thread_local = "1.1.7"
+lazy_static = "1.4.0"

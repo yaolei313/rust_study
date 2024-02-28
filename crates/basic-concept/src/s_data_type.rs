@@ -1,6 +1,6 @@
 use ahash::{AHasher, RandomState};
-use std::{collections::HashMap, fmt::Display};
-
+use std::{collections::HashMap, fmt::Display, sync::Mutex};
+use lazy_static::lazy_static;
 use basic_utils;
 
 use crate::s_pattern_match::Point;
@@ -11,7 +11,21 @@ use crate::s_pattern_match::Point;
 const NAME: &str = "我没啥优点，就是活得久，嘿嘿";
 /// static全局变量
 /// 和const相比，不会inline；且可以是可变的mut；多线程访问的话，不安全；必须实现Sync trait；定义时必须赋值且编译期就可以确定值；名称也是必须大写。
+/// 可以用lazy static宏初始化静态变量
 static NAME2: &str = "hello world";
+
+lazy_static! {
+    static ref NAME3: Mutex<String> = Mutex::new(String::from("hello world"));
+
+    static ref DIC1: HashMap<u32, &'static str, RandomState> =  {
+        let mut m: HashMap<u32, &'static str, RandomState> = HashMap::default();
+        m.insert(0, "unknown");
+        m.insert(1, "phone");
+        m.insert(2, "email");
+        m
+    };
+}
+
 
 ///
 /// #基本类型，所有基本类型都实现了copy trait，会自动被copy
@@ -108,6 +122,8 @@ pub fn study_primative_type() {
 
     let t1 = b"hello world";
     let b1 = t1.starts_with(b"hello");
+    
+    println!("{} {} {}", NAME, NAME2, NAME3.lock().unwrap());
 }
 
 pub fn study_compound_type() {
@@ -251,9 +267,12 @@ fn study_map() {
     }
     println!("count map {:?}", count_map);
 
-    // rust默认使用安全hash算法，性能会差一些
+    // rust默认使用安全hash算法，性能会差一些, 可以用AHasher
     let mut map: HashMap<i32, i32, RandomState> = HashMap::default();
     map.insert(1, 123);
+
+    let mut map2 = HashMap::with_hasher(RandomState::default());
+    map2.insert(1, 3);
 }
 
 fn study_slice() {
