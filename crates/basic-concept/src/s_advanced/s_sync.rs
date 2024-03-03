@@ -1,5 +1,6 @@
+use std::cell::OnceCell;
 use std::sync::atomic::Ordering;
-use std::sync::Arc;
+use std::sync::{Arc, OnceLock};
 use std::{sync::atomic::AtomicU32, thread};
 
 /// todo:
@@ -69,3 +70,23 @@ pub fn study_sync() {
     }
     println!("{}", cur_count.load(Ordering::Relaxed));
 }
+
+#[derive(Debug)]
+struct Logger {
+
+}
+
+impl Logger {
+    fn new() -> Self {
+        println!("new instance");
+        Logger {}
+    }
+}
+
+static LOG: OnceLock<Logger> = OnceLock::new();
+
+pub fn study_cell() {
+    // 相当于java的单例模式，OnceCell是非线程安全场景，OnceLock是线程安全场景。
+    let t = LOG.get_or_init(|| Logger::new());
+}
+

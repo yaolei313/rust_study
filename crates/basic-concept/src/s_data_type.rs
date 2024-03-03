@@ -14,6 +14,9 @@ const NAME: &str = "我没啥优点，就是活得久，嘿嘿";
 /// 可以用lazy static宏初始化静态变量
 static NAME2: &str = "hello world";
 
+/// calls in statics are limited to constant functions, tuple structs and tuple variants
+///static NAME21: Mutex<String> = Mutex::new(String::from("hello world"));
+
 lazy_static! {
     static ref NAME3: Mutex<String> = Mutex::new(String::from("hello world"));
 
@@ -24,6 +27,35 @@ lazy_static! {
         m.insert(2, "email");
         m
     };
+}
+
+/// 以上均为编译时初始化，若需要运行时初始化，则需要使用Box::leak
+#[derive(Debug)]
+struct Config {
+    a: String,
+    b: String,
+}
+static mut CONFIG: Option<&mut Config> = None;
+
+pub fn init() {
+    unsafe {
+        // 尝试把生命周期更短的对象赋值给'static生命周期的对象,会变异错误
+        // CONFIG = Some(&mut Config {
+        //     a: String::from("hello"),
+        //     b: String::from("world")
+        // });
+        CONFIG = init_config();
+        println!("{:?}", CONFIG);
+    }
+}
+
+/// 函数返回全局变量
+fn init_config() -> Option<&'static mut Config> {
+    let c= Box::new(Config {
+        a: String::from("hello"),
+        b: String::from("world")
+    });
+    Some(Box::leak(c))
 }
 
 
