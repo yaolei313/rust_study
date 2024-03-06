@@ -13,6 +13,7 @@ pub mod s_smart_pointer;
 pub mod s_struct_trait;
 pub mod s_thread;
 pub mod s_unsafe;
+pub mod s_error;
 
 pub fn study_basic_concept() {
     s_data_type::study_primative_type();
