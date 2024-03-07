@@ -2,6 +2,7 @@ pub mod s_advanced;
 pub mod s_closure;
 pub mod s_control_flow;
 pub mod s_data_type;
+pub mod s_error;
 pub mod s_genericity;
 pub mod s_iter;
 pub mod s_lifetime;
@@ -13,7 +14,6 @@ pub mod s_smart_pointer;
 pub mod s_struct_trait;
 pub mod s_thread;
 pub mod s_unsafe;
-pub mod s_error;
 
 pub fn study_basic_concept() {
     s_data_type::study_primative_type();

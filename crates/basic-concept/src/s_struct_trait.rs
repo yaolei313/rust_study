@@ -4,7 +4,7 @@
 /// * 第一个参数不是self，则叫associated function，通过::调用
 ///
 /// 另外nagative impls 可以保证对应type不会实现对应的trait
-/// https://doc.rust-lang.org/beta/unstable-book/language-features/negative-impls.html?highlight=!trait#negative_impls 
+/// https://doc.rust-lang.org/beta/unstable-book/language-features/negative-impls.html?highlight=!trait#negative_impls
 ///
 /// trait Xxx: Yyy 实现特征Xxx时，必须也实现Yyy。supertrait
 ///

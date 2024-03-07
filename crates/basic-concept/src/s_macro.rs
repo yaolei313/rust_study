@@ -27,9 +27,9 @@ pub fn study_macro() {
     // let sql = sql!(select * from user where id=1);
 }
 
-/// 声明宏
+/// 声明宏：使用macro_rules!定义
 ///
-/// macro_rules！ 开始定义宏，宏名称不带！，使用的时候才带！
+/// 开始定义宏，宏名称不带！，使用的时候才带！
 #[macro_export]
 macro_rules! myvec {
     // 分支模式，若是匹配，则执行=>之后的内容
@@ -47,11 +47,11 @@ macro_rules! myvec {
     };
 }
 
-// 自定义derive宏
+// 过程宏：自定义派生宏，#[derive(Xxxx)]
 #[derive(HelloMacro)]
 pub struct Pancakes;
 
-// attribute-like宏
+// 过程宏：attribute-like宏
 // #[route(GET, "/")]
 fn index() {
     todo!()

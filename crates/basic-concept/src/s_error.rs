@@ -1,10 +1,15 @@
-use std::{error::Error, fmt::Display, fs::{self, File}, io::{self, Read}};
-use std::num;
+use std::{error, num};
+use std::{
+    error::Error,
+    fmt::Display,
+    fs::{self, File},
+    io::{self, Read},
+};
 
 #[derive(Debug)]
 pub struct AppError {
     code: i32,
-    message: String
+    message: String,
 }
 
 impl Display for AppError {
@@ -17,16 +22,19 @@ impl Error for AppError {}
 
 impl From<io::Error> for AppError {
     fn from(value: io::Error) -> Self {
-        AppError{
+        AppError {
             code: IO_ERROR,
-            message: value.to_string()
+            message: value.to_string(),
         }
     }
 }
 
 impl From<num::ParseIntError> for AppError {
     fn from(value: num::ParseIntError) -> Self {
-        AppError { code: NUMBER_PARSE_ERROR, message: value.to_string() }
+        AppError {
+            code: NUMBER_PARSE_ERROR,
+            message: value.to_string(),
+        }
     }
 }
 
@@ -45,9 +53,36 @@ fn read_file() -> Result<String, AppError> {
 
 fn parse() -> Result<i32, AppError> {
     let s = "5";
-    i32::from_str_radix(src, radix)
-    let x = i32::from_str(s).unwrap();
+    let x = i32::from_str_radix(s, 10).unwrap();
     let s1 = "a123";
-    let r:i32 = s1.parse()?;
+    // 通过std::num中的宏实现from_str_radix_int_impl
+    // macro_rules! from_str_radix_int_impl {
+    //     ($($t:ty)*) => {$(
+    //         #[stable(feature = "rust1", since = "1.0.0")]
+    //         impl FromStr for $t {
+    //             type Err = ParseIntError;
+    //             fn from_str(src: &str) -> Result<Self, ParseIntError> {
+    //                 from_str_radix(src, 10)
+    //             }
+    //         }
+    //     )*}
+    // }
+    // from_str_radix_int_impl! { isize i8 i16 i32 i64 i128 usize u8 u16 u32 u64 u128 }
+    let r: i32 = s1.parse()?;
     Ok(r)
+}
+
+/// https://github.com/dtolnay/thiserror
+#[derive(thiserror::Error, Debug)]
+enum MyError {
+    #[error("custom io error")]
+    IoError(#[from] io::Error),
+    #[error("the param {0} is error")]
+    ParamError(String),
+    #[error("invalid header (expected {expected:?}, found {found:?})")]
+    InvalidHeader { expected: String, found: String },
+    #[error("test")]
+    NumberParseError(#[from] num::ParseIntError),
+    #[error("unknow error")]
+    UNKNOW,
 }

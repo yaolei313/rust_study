@@ -1,7 +1,7 @@
 use ahash::{AHasher, RandomState};
-use std::{collections::HashMap, fmt::Display, sync::Mutex};
-use lazy_static::lazy_static;
 use basic_utils;
+use lazy_static::lazy_static;
+use std::{collections::HashMap, fmt::Display, sync::Mutex};
 
 use crate::s_pattern_match::Point;
 
@@ -19,8 +19,7 @@ static NAME2: &str = "hello world";
 
 lazy_static! {
     static ref NAME3: Mutex<String> = Mutex::new(String::from("hello world"));
-
-    static ref DIC1: HashMap<u32, &'static str, RandomState> =  {
+    static ref DIC1: HashMap<u32, &'static str, RandomState> = {
         let mut m: HashMap<u32, &'static str, RandomState> = HashMap::default();
         m.insert(0, "unknown");
         m.insert(1, "phone");
@@ -51,13 +50,12 @@ pub fn init() {
 
 /// 函数返回全局变量
 fn init_config() -> Option<&'static mut Config> {
-    let c= Box::new(Config {
+    let c = Box::new(Config {
         a: String::from("hello"),
-        b: String::from("world")
+        b: String::from("world"),
     });
     Some(Box::leak(c))
 }
-
 
 ///
 /// #基本类型，所有基本类型都实现了copy trait，会自动被copy
@@ -154,7 +152,7 @@ pub fn study_primative_type() {
 
     let t1 = b"hello world";
     let b1 = t1.starts_with(b"hello");
-    
+
     println!("{} {} {}", NAME, NAME2, NAME3.lock().unwrap());
 }
 

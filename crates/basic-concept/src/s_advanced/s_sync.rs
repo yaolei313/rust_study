@@ -72,9 +72,7 @@ pub fn study_sync() {
 }
 
 #[derive(Debug)]
-struct Logger {
-
-}
+struct Logger {}
 
 impl Logger {
     fn new() -> Self {
@@ -89,4 +87,3 @@ pub fn study_cell() {
     // 相当于java的单例模式，OnceCell是非线程安全场景，OnceLock是线程安全场景。
     let t = LOG.get_or_init(|| Logger::new());
 }
-
