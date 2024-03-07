@@ -75,11 +75,12 @@ fn parse() -> Result<i32, AppError> {
 /// https://github.com/dtolnay/thiserror
 #[derive(thiserror::Error, Debug)]
 enum MyError {
+    // #[error] 代表实现Display trait
     #[error("custom io error")]
     IoError(#[from] io::Error),
-    #[error("the param {0} is error")]
+    #[error("the param {0} is error")] // write!(f, "{}", self.0)
     ParamError(String),
-    #[error("invalid header (expected {expected:?}, found {found:?})")]
+    #[error("invalid header (expected {expected:?}, found {found:?})")] // write!(f, "{:?} {:?}", self.expected, self, found)
     InvalidHeader { expected: String, found: String },
     #[error("test")]
     NumberParseError(#[from] num::ParseIntError),
