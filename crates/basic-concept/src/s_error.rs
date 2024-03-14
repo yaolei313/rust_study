@@ -75,7 +75,7 @@ fn parse() -> Result<i32, AppError> {
 /// https://github.com/dtolnay/thiserror
 #[derive(thiserror::Error, Debug)]
 enum MyError {
-    // #[error] 代表实现Display trait
+    // #[error] 代表实现Display trait,#[from] 代表实现From trait
     #[error("custom io error")]
     IoError(#[from] io::Error),
     #[error("the param {0} is error")] // write!(f, "{}", self.0)
@@ -86,5 +86,9 @@ enum MyError {
     #[error("test")]
     NumberParseError(#[from] num::ParseIntError),
     #[error("unknow error")]
-    UNKNOW,
+    Unknown,
+}
+
+fn test() -> anyhow::Result<String> {
+    todo!()
 }

@@ -117,6 +117,8 @@ fn init_config() -> Option<&'static mut Config> {
 /// crate分为2种，binary crate和library crate，前者包含main入口，可以编译为executable file
 ///
 /// rust编译的最小代码单元是crate，crate root是一个source file。分别为src/lib.rs,src/main.rs
+///
+/// [std::core::format_args_nl]
 ////
 pub fn study_primative_type() {
     // 前者使用显示的类型标注，后者直接制定泛型类型
@@ -146,7 +148,6 @@ pub fn study_primative_type() {
     println!("The size of string slice: {}", std::mem::size_of::<&str>()); // 16 bytes
     println!("The size of Array[u8;3]: {}", std::mem::size_of::<[u8; 3]>()); // 3 bytes
 
-    //
     let s1 = "123";
     let p = s1.as_ptr();
 

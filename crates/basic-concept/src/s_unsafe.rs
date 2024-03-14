@@ -17,7 +17,7 @@
 //!   当一个线程访问一个可变对象时，另一个线程正在修改这个对象，就会发生数据竞争。
 
 use core::slice;
-use std::sync::atomic::Ordering;
+use std::{marker::PhantomPinned, pin::Pin, ptr::NonNull, sync::atomic::Ordering};
 
 ///  
 /// dereference a raw pointer
@@ -125,3 +125,33 @@ pub fn modify_gloal_variables() {
 static HELLO_MSG: &str = "hello world";
 
 static mut COUNT: u32 = 0;
+
+struct Unmovable {
+    data: String,
+    slice: NonNull<String>,
+    _pin: PhantomPinned,
+}
+
+impl Unmovable {
+    // To ensure the data doesn't move when the function returns,
+    // we place it in the heap where it will stay for the lifetime of the object,
+    // and the only way to access it would be through a pointer to it.
+    fn new(data: String) -> Pin<Box<Self>> {
+        let res = Unmovable {
+            data,
+            // we only create the pointer once the data is in place
+            // otherwise it will have already moved before we even started
+            slice: NonNull::dangling(),
+            _pin: PhantomPinned,
+        };
+        let mut boxed: Pin<Box<Unmovable>> = Box::pin(res);
+
+        let slice = NonNull::from(&boxed.data);
+        let mut_ref: Pin<&mut Self> = Pin::as_mut(&mut boxed);
+        // we know this is safe because modifying a field doesn't move the whole struct
+        unsafe {
+            Pin::get_unchecked_mut(mut_ref).slice = slice;
+        }
+        boxed
+    }
+}

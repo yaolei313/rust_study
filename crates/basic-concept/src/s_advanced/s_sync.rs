@@ -49,8 +49,9 @@ use std::{sync::atomic::AtomicU32, thread};
 /// seq cst: 多了全局顺序single total order，所有线程看到的修改顺序都是一致的。
 ///
 ///
-/// Send trait 可以在线程间安全的转移所有权
-/// Sync trait 可以在线程间安全的共享变量。
+/// [Send] trait 可以在线程间安全的转移所有权
+/// [Sync] trait 可以在线程间安全的共享变量。
+/// [format_args_nl]
 ///
 ///
 pub fn study_sync() {

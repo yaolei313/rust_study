@@ -45,6 +45,11 @@
 /// 匿名生命周期'_
 /// 静态生命周期'static，和整个程序活的一样久，硬编码到二进制文件中
 ///
+/// variance 变形
+/// F is covariant(协变) if F<Sub> is a subtype of F<Super> (the subtype property is passed through)
+/// F is contravariant(逆变) if F<Super> is a subtype of F<Sub> (the subtype property is "inverted")
+/// F is invariant(不变) otherwise (no subtyping relationship exists)
+///
 fn longer<'a>(x: &'a str, y: &'a str) -> &'a str {
     // 它的实际含义是 longest 函数返回的output lifetime与input lifetimes中lifetime较小的一致。
     // 注意 longest 函数并不需要知道 x 和 y 具体会存在多久，而只需要知道有某个可以被 'a 替代的作用域将会满足这个签名。

@@ -16,3 +16,4 @@ hello-macro-derive.workspace = true
 thread_local = "1.1.7"
 lazy_static = "1.4.0"
 thiserror = "1.0"
+anyhow = "1.0"
