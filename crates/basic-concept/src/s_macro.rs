@@ -17,8 +17,9 @@ use hello_macro::HelloMacro;
 
 pub fn study_macro() {
     let v: Vec<u32> = vec![1, 2, 3];
-    let v1 = myvec![2, 3, 4];
-    println!("vec is {:?} {:?}", v, v1);
+    let v1 = myvec!(2; 3; 4);
+    let v2 = myvec![3; 4; 5];
+    println!("vec is {:?} {:?} {:?}", v, v1, v2);
 
     // derive macro
     Pancakes::hello_macro();
@@ -29,14 +30,17 @@ pub fn study_macro() {
 
 /// 声明宏：使用macro_rules!定义
 ///
-/// 开始定义宏，宏名称不带！，使用的时候才带！
+/// 开始定义宏，宏名称不带！，使用的时候才带!
+/// 宏定义使用[]或{}都是可以的
 #[macro_export]
 macro_rules! myvec {
     // 分支模式，若是匹配，则执行=>之后的内容
-    // $表示是宏变量，()代表捕获和模式匹配的代码。$($x:expr)内$x:expr,其匹配任何rust的代码，并命名为$x
-    // ,* 代表可以匹配1个或多个之前的模式
+    // $表示是宏变量，()代表捕获和模式匹配的代码。
+    // $($x:expr), expr表示匹配任何rust的表达式，并命名为$x
+    // ; 表示多个代码分隔, 可以用`,`或`;`或`=>`符号
+    // * 代表可以匹配任意次之前的模式
     // 每匹配一次都会在右侧$()*中的内容重复1次
-    ( $( $x:expr ),* ) => {
+    ( $( $x:expr );* ) => {
         {
             let mut temp_vec = Vec::new();
             $(

@@ -80,7 +80,8 @@ enum MyError {
     IoError(#[from] io::Error),
     #[error("the param {0} is error")] // write!(f, "{}", self.0)
     ParamError(String),
-    #[error("invalid header (expected {expected:?}, found {found:?})")] // write!(f, "{:?} {:?}", self.expected, self, found)
+    #[error("invalid header (expected {expected:?}, found {found:?})")]
+    // write!(f, "{:?} {:?}", self.expected, self, found)
     InvalidHeader { expected: String, found: String },
     #[error("test")]
     NumberParseError(#[from] num::ParseIntError),
