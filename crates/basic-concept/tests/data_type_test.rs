@@ -8,7 +8,7 @@ mod test {
 
     #[test]
     fn test1() {
-        basic_concept::s_data_type::study_enum_convert();
+        basic_concept::s_type::study_enum_convert();
     }
 
     #[test]

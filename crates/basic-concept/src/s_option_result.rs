@@ -23,6 +23,9 @@ pub fn study_option() {
     let b: Option<&str> = None;
     let b2 = b.unwrap_or("hello");
     println!("b2 {}", b2);
+
+    let mut c = Some(10);
+    c.take();
 }
 
 fn add_last_numbers(stack: &mut Vec<i32>) -> Option<i32> {

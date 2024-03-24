@@ -1,5 +1,4 @@
-///
-/// #ownership规则
+/// # ownership规则
 /// each value in rust has a owner
 /// there can only be one owner at a time
 /// when the owner goes out of scope, the value will be dropped
@@ -10,12 +9,24 @@
 /// 变量的作用域是函数结束，或者代码块结束
 /// 引用的作用域是引用创建到最后一次使用。
 ///
-/// 赋值，函数传入值，函数返回值(没有实现copy trait)都会导致所有权转移move。
+/// 赋值，函数传入值，函数返回值等场景会涉及move或copy
+/// * 若没有实现[Copy] trait，则会导致所有权转移move
+/// * 若实现了[Copy] trait，则都会调用Copy trait。实现了Copy trait，则不能实现[Drop] trait
 ///
-/// move实际是浅复制(shallow copy)+旧value失效(value离开作用域会释放内存，旧value失效可以避免double free的问题)。
-/// String 由栈中存储部分(ptr,len,capacity)和堆中存储部分组成。 move复制栈中部分。
+/// 什么是move
+/// * move实际是浅复制(shallow copy)+旧variable绑定失效(value离开作用域会释放内存，旧绑定失效可以避免double free的问题)
 ///
-/// copy trait类型的value会存储在栈上。
+/// rust从不自动创建deep copy
+/// * 基本类型也都实现了[Copy], 参照s_type.rs
+/// * &T实现了[Copy]，故引用都是shallow copy。
+///
+/// * data with stack and heap
+///     - 由stack存储部分和heap存储部分组成，比如[String] 栈(ptr,len,capacity)和堆数组
+///     - 一般都会实现[Clone] trait,比如[String]
+///     - 非引用场景，涉及move
+///
+/// * stack only data
+///     - 使用[Copy] trait标记的类型，类型的value只存储在栈上。
 ///
 ///
 /// 生命周期注解只是标明了多个引用间的生命周期的关系，并不改变其生命周期的长短。
@@ -49,6 +60,9 @@
 /// F is covariant(协变) if F<Sub> is a subtype of F<Super> (the subtype property is passed through)
 /// F is contravariant(逆变) if F<Super> is a subtype of F<Sub> (the subtype property is "inverted")
 /// F is invariant(不变) otherwise (no subtyping relationship exists)
+///
+/// rust的variance规则如下
+/// https://doc.rust-lang.org/nomicon/subtyping.html
 ///
 fn longer<'a>(x: &'a str, y: &'a str) -> &'a str {
     // 它的实际含义是 longest 函数返回的output lifetime与input lifetimes中lifetime较小的一致。

@@ -1,7 +1,6 @@
 pub mod s_advanced;
 pub mod s_closure;
 pub mod s_control_flow;
-pub mod s_data_type;
 pub mod s_error;
 pub mod s_genericity;
 pub mod s_iter;
@@ -13,13 +12,14 @@ pub mod s_pointer;
 pub mod s_smart_pointer;
 pub mod s_struct_trait;
 pub mod s_thread;
+pub mod s_type;
 pub mod s_unsafe;
 
 pub fn study_basic_concept() {
-    s_data_type::study_primative_type();
-    s_data_type::study_compound_type();
-    s_data_type::study_collection_type();
-    s_data_type::study_type_convert();
+    s_type::study_primative_type();
+    s_type::study_compound_type();
+    s_type::study_collection_type();
+    s_type::study_type_convert();
 
     s_smart_pointer::study_smart_point();
 

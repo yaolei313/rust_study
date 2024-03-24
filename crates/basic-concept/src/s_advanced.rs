@@ -1,7 +1,10 @@
 use std::fmt;
 
+pub mod future_executor;
+pub mod s_async;
 pub mod s_others;
 pub mod s_sync;
+pub mod timer_future;
 
 ///
 /// rust不检查trait的方法是否和自身方法冲突。故调用时需要使用fully qualified syntax调用
