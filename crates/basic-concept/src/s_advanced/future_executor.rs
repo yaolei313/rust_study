@@ -52,6 +52,7 @@ impl Executor {
                 // 基于任务自身创建一个 `LocalWaker`
                 let waker = waker_ref(&task);
                 let context = &mut Context::from_waker(&*waker);
+                dbg!(&context);
                 // `BoxFuture<T>`是`Pin<Box<dyn Future<Output = T> + Send + 'static>>`的类型别名
                 // 通过调用`as_mut`方法，可以将上面的类型转换成`Pin<&mut dyn Future + Send + 'static>`
                 if future.as_mut().poll(context).is_pending() {
@@ -74,6 +75,7 @@ struct Spawner {
 impl Spawner {
     fn spawn(&self, future: impl Future<Output = ()> + 'static + Send) {
         let future = future.boxed();
+        // Arc当strong reference count=0的时候才被回收
         let task = Arc::new(Task {
             future: Mutex::new(Some(future)),
             task_sender: self.task_sender.clone(),
