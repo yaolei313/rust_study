@@ -1,7 +1,7 @@
 /// rust中遍历使用for in 更高效，避免了bounds checking
 ///
 /// for循环，转移所有权
-/// ```
+/// ```text
 /// for item in collection {
 /// }
 /// ```
@@ -9,15 +9,15 @@
 ///
 ///
 /// for循环，不可变借用
-/// ```
+/// ```text
 /// for item in &collection {
 ///    ...
 /// }
 /// ```
-/// 等价 for item in collection.iter()
+/// 等价for item in collection.iter()
 ///
 /// for循环，可变借用
-/// ```
+/// ```text
 /// for item in &mut collection {
 ///    ...
 /// }

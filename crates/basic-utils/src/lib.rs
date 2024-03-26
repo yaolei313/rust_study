@@ -37,7 +37,7 @@ pub fn add<T: std::ops::Add<Output = T>>(a: T, b: T) -> T {
 /// ```rust,should_panic
 /// # // 使用#开头的行会在文档中被隐藏起来，但是依然会在文档测试中运行
 /// # // panics on devision by zero
-/// # let r = basic_utils::device(10,0);
+/// # let r = basic_utils::devide(10,0);
 /// ```
 pub fn devide(a: i32, b: i32) -> i32 {
     a / b

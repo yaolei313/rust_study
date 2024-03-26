@@ -16,14 +16,15 @@ pub mod timer_future;
 ///
 /// 使用newtype pattern可以绕过coherence限制，比如为Vec<String>实现Display trait
 ///
+/// ```text
 /// pub struct Wrapper(Vec<String>);
 ///
 /// impl fmt::Display for Wrapper {
-///
 ///     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 ///         write!(f, "[{}]", self.0.join(", "));
 ///     }
 /// }
+/// ```
 ///
 /// 可以通过type定义类型别名, 别名类型是synonym同义词。比如
 /// type Kilometers = i32;
