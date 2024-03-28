@@ -63,6 +63,17 @@
 ///
 /// rust的variance规则如下
 /// https://doc.rust-lang.org/nomicon/subtyping.html
+///             'a	        T
+/// &'a T	    covariant	covariant	
+/// &'a mut T	covariant	invariant	
+/// Box<T>		            covariant	
+/// Vec<T>		            covariant	
+/// UnsafeCell<T>	        invariant	
+/// Cell<T>		            invariant	
+/// fn(T) -> ()		        contravariant	
+/// fn() -> T               covariant
+/// *const T		        covariant	
+/// *mut T		            invariant	
 ///
 fn longer<'a>(x: &'a str, y: &'a str) -> &'a str {
     // 它的实际含义是 longest 函数返回的output lifetime与input lifetimes中lifetime较小的一致。
