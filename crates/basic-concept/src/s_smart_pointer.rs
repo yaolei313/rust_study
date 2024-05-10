@@ -16,6 +16,8 @@ use basic_utils::data_struct::BinaryTreeNode;
 /// * 只关注是否实现了某个trait
 /// Box<T> 指向堆上数据，当被丢弃时，会释放堆上的数据。单个所有者
 ///
+/// Box::leak 用来在运行期间创建variable with static lifetime
+///
 /// Deref trait 重载了不可变引用的解引用操作符*，将智能指针当做常规引用处理。
 /// DerefMut trait 重载了可变引用的解引用操作符*
 /// Drop trait 值离开作用范围时执行的代码，比如是否网络连接，关闭文件等
@@ -26,11 +28,11 @@ use basic_utils::data_struct::BinaryTreeNode;
 /// T: DerefMut(target = U) , &mut T -> &mut U
 /// 只建议给自定义的智能指针实现Deref特征
 ///
-/// # Rc<T> [std::rc::Rc]
+/// # Rc<T> [std::rc::Rc]   nagative impl ![Send] ![Sync]
 /// 引用计数智能指针，单线程环境使用。不可变引用。可以RefCell实现内部可变性。
 /// Rc::new 会move ownership进入Rc，每次调用Rc::clone都会增加引用计数，离开作用域时减少引用计数
 ///
-/// # Arc<T> [std::sync::Arc]
+/// # Arc<T> [std::sync::Arc]  实现了[Send] [Sync]trait
 /// 多线程场景使用，不可变引用。可以RefCell实现内部可变性。
 ///
 /// # Cell<T> [std::cell::Cell]
@@ -83,6 +85,9 @@ pub fn study_smart_point() {
                             // &MyBox<String> -> &String -> &str
     study_str_deref_coercion(&m1);
 
+    let s1 = String::from("convert data");
+    let s2 = to_static_lifetime(s1);
+
     study_rc();
 
     study_arc();
@@ -90,6 +95,11 @@ pub fn study_smart_point() {
     study_ref_cell();
 
     study_pointer();
+}
+
+fn to_static_lifetime(s: String) -> &'static str {
+    let s: &'static str = Box::leak(Box::new(s).into_boxed_str());
+    s
 }
 
 fn study_pointer() {

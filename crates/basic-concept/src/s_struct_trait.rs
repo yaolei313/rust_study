@@ -44,6 +44,9 @@
 /// <Study as Trait>::test() 调用后者
 /// Study::test() 调用前者
 ///
+/// 当使用trait特型方法时需要确保其本身必须存在当前作用域中，否则trait特型所有的方法都是不可用的；
+/// 若是trait特型是[std::prelude]的一部分，这样rust就会默认自动将其引入
+///
 ///
 use std::{
     fmt::{Debug, Display},

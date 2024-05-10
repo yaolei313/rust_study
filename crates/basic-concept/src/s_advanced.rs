@@ -16,7 +16,7 @@ pub mod timer_future;
 ///
 /// orphan rule孤儿原则
 /// we can't implement external traits on external types.
-/// 
+///
 /// 使用newtype pattern可以绕过coherence限制，比如为Vec<String>实现Display trait
 ///
 /// ```text

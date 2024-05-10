@@ -2,13 +2,14 @@
 // 每一个 tests 目录中的测试文件都是完全独立的 crate
 #[cfg(test)]
 mod test {
+    use basic_concept::s_type;
     use std::cell::Cell;
     use std::collections::HashMap;
     use std::hash::Hash;
 
     #[test]
     fn test1() {
-        basic_concept::s_type::study_enum_convert();
+        s_type::study_enum_convert();
     }
 
     #[test]
@@ -104,5 +105,10 @@ mod test {
         let s2 = String::from(s);
 
         println!("s2 {} s {}", s2, s);
+    }
+
+    #[test]
+    fn test8() {
+        s_type::study_slice();
     }
 }

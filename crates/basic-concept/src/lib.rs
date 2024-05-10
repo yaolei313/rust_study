@@ -6,12 +6,14 @@ pub mod s_genericity;
 pub mod s_iter;
 pub mod s_lifetime;
 pub mod s_macro;
+pub mod s_network;
 pub mod s_option_result;
 pub mod s_pattern_match;
 pub mod s_pointer;
 pub mod s_smart_pointer;
 pub mod s_struct_trait;
 pub mod s_thread;
+pub mod s_tokio;
 pub mod s_type;
 pub mod s_unsafe;
 

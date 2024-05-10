@@ -96,7 +96,7 @@ fn init_config() -> Option<&'static mut Config> {
 /// * 引用reference
 ///     &T / &mut T 内存对齐的指向T的有效的值指针，表示对该T元素的借用，栈上空间为usize
 /// * Array
-///     [T; N],栈上空间为Sizeof(T)*N
+///     [T; N],只有栈部分，栈上空间为Sizeof(T)*N
 /// * String
 ///     std::String，栈上空间为3*usize，ptr，len，cap
 /// * Slice
@@ -306,7 +306,7 @@ fn study_map() {
     map2.insert(1, 3);
 }
 
-fn study_slice() {
+pub fn study_slice() {
     // slice类型，没有对象所有权
 
     // 数组slice
@@ -325,6 +325,15 @@ fn study_slice() {
 
     let v1_slice2 = &mut v1[..];
     println!("{:?}", v1_slice2);
+
+    let mut r1 = b"hello";
+    let mut r2: &[u8] = b"world";
+    print_type(r1);
+    print_type(r2);
+}
+
+fn print_type<T: ?Sized>(_: &T) {
+    println!("type: {}", std::any::type_name::<T>());
 }
 
 pub fn study_type_convert() {
