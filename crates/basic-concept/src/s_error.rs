@@ -6,6 +6,8 @@ use std::{
     io::{self, Read},
 };
 
+use anyhow::anyhow;
+
 #[derive(Debug)]
 pub struct AppError {
     code: i32,
@@ -89,6 +91,8 @@ enum MyError {
     Unknown,
 }
 
+//
 fn test() -> anyhow::Result<String> {
+    let err = anyhow!("stupid error");
     todo!()
 }

@@ -27,7 +27,7 @@ async fn handle_connect(mut socket: TcpStream) -> io::Result<()> {
 }
 
 async fn echo_handle(mut socket: TcpStream) -> io::Result<()> {
-    let (r,w) = socket.split();
+    let (r, w) = socket.split();
 
     Ok(())
 }

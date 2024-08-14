@@ -15,7 +15,7 @@ use futures::{channel::mpsc, executor::block_on, select, FutureExt, Sink, SinkEx
 ///
 /// [futures::join!]      并发运行future，等待全部完成
 /// [futures::try_join!]  并发运行future，但一个future报错立即返回
-/// [futures::select!]    并发运行future，一个完成即可以被处理。待学习。 
+/// [futures::select!]    并发运行future，一个完成即可以被处理。待学习。
 ///                       模式 = async 表达式 => 结果处理，并发执行所有分支的async表达式，任一执行完成，和模式进行匹配，若匹配，则剩下的表达式会被释放
 ///
 pub fn study_async() {

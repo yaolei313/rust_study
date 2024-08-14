@@ -59,7 +59,7 @@ pub fn study_result() {
 /// 错误传播?操作符
 /// ?可以用到返回Option类型的语句之后，若返回值是None，会立即return None，若返回值是Some，则执行unwrap
 /// ?可以用到返回Result类型的语句之后，若返回只是Err，则return Err，若返回值是Ok，则执行unwrap获取包装的值
-/// 也可以自动调用Error的from trait完成error类型的装换
+/// 也可以自动调用目标Error的From trait实现，完成error类型的装换。anyhow::Result
 fn read_username_from_file() -> Result<String, io::Error> {
     let mut file = File::open("username.txt")?;
     let mut username = String::new();

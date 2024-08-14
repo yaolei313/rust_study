@@ -10,11 +10,12 @@ use crate::s_pattern_match::Point;
 /// 定义时必须赋值；必须指定类型;名称全部大写;定义时必须赋值且编译期就可以确定值;可以在任意作用域定义，其生命周期等同整个程序的生命周期，编译器会尽可能内联代码。
 const NAME: &str = "我没啥优点，就是活得久，嘿嘿";
 /// static全局变量
-/// 和const相比，不会inline；且可以是可变的mut；多线程访问的话，不安全；必须实现Sync trait；定义时必须赋值且编译期就可以确定值；名称也是必须大写。
+/// 和const相比，不会inline；且可以是可变的mut；多线程访问的话，不安全，必须实现Sync trait；定义时必须赋值且编译期就可以确定值；名称也是必须大写。
 /// 可以用lazy static宏初始化静态变量
 static NAME2: &str = "hello world";
 
 /// calls in statics are limited to constant functions, tuple structs and tuple variants
+/// cannot call non-const fn `<String as From<&str>>::from` in statics
 ///static NAME21: Mutex<String> = Mutex::new(String::from("hello world"));
 
 lazy_static! {
@@ -26,6 +27,10 @@ lazy_static! {
         m.insert(2, "email");
         m
     };
+}
+
+pub const fn test_const_fn() -> &'static str {
+    "编译时就可以计算的fn才可以是const"
 }
 
 /// 以上均为编译时初始化，若需要运行时初始化，则需要使用Box::leak
@@ -155,6 +160,8 @@ pub fn study_primative_type() {
     let b1 = t1.starts_with(b"hello");
 
     println!("{} {} {}", NAME, NAME2, NAME3.lock().unwrap());
+
+    let t2 = b"abc";
 }
 
 pub fn study_compound_type() {

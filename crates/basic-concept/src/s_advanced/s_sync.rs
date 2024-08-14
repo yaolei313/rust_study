@@ -1,6 +1,6 @@
-use std::cell::OnceCell;
+use std::cell::{LazyCell, OnceCell};
 use std::sync::atomic::Ordering;
-use std::sync::{Arc, OnceLock};
+use std::sync::{Arc, LazyLock, OnceLock};
 use std::{sync::atomic::AtomicU32, thread};
 
 /// todo:
@@ -82,9 +82,100 @@ impl Logger {
     }
 }
 
+// OnceCell 只能单线程场景下使用，不可以static
+// OnceLock 可以多线程场景下使用，可以static
+// LazyCell 单线程  本身自带初始化逻辑
+// LazyLock 多线程
 static LOG: OnceLock<Logger> = OnceLock::new();
 
-pub fn study_cell() {
+// static LOG2: OnceCell<String> = OnceCell::new();
+
+static T1: OnceLock<String> = OnceLock::new();
+
+// Let's exercise this new Sync append-only list by doing a little counting
+static LIST: OnceList<u32> = OnceList::new();
+static COUNTER: AtomicU32 = AtomicU32::new(0);
+
+pub fn study_once_cell() {
     // 相当于java的单例模式，OnceCell是非线程安全场景，OnceLock是线程安全场景。
     let t = LOG.get_or_init(|| Logger::new());
+
+    println!("{}", T1.get().is_none());
+    std::thread::spawn(|| {
+        let t1_value = T1.get_or_init(|| "world".to_string());
+        println!("{} ", t1_value);
+    })
+    .join()
+    .unwrap();
+
+    let t2 = OnceCell::new();
+    let t2_value = t2.get_or_init(|| "hello".to_string());
+    println!("{} ", t2_value);
+
+    let vec = (0..thread::available_parallelism().unwrap().get())
+        .map(|_| {
+            thread::spawn(|| {
+                while let i @ 0..=1000 = COUNTER.fetch_add(1, Ordering::Relaxed) {
+                    LIST.push(i);
+                }
+            })
+        })
+        .collect::<Vec<thread::JoinHandle<_>>>();
+    vec.into_iter().for_each(|handle| handle.join().unwrap());
+
+    for i in 0..=1000 {
+        assert!(LIST.contains(&i));
+    }
+}
+
+struct OnceList<T> {
+    data: OnceLock<T>,
+    next: OnceLock<Box<OnceList<T>>>,
+}
+
+impl<T> OnceList<T> {
+    const fn new() -> OnceList<T> {
+        OnceList {
+            data: OnceLock::new(),
+            next: OnceLock::new(),
+        }
+    }
+    fn push(&self, value: T) {
+        // FIXME: this impl is concise, but is also slow for long lists or many threads.
+        // as an exercise, consider how you might improve on it while preserving the behavior
+        if let Err(value) = self.data.set(value) {
+            let next = self.next.get_or_init(|| Box::new(OnceList::new()));
+            next.push(value)
+        };
+    }
+    fn contains(&self, example: &T) -> bool
+    where
+        T: PartialEq,
+    {
+        self.data
+            .get()
+            .map(|item| item == example)
+            .filter(|v| *v)
+            .unwrap_or_else(|| self.next.get().map(|next| next.contains(example)).unwrap_or(false))
+    }
+}
+
+static DEEP_THOUGHT: LazyLock<String> = LazyLock::new(|| {
+    // M3 Ultra takes about 16 million years in --release config
+    "hello world".to_string()
+});
+
+pub fn study_lazy_cell() {
+    let lazy: LazyCell<i32> = LazyCell::new(|| {
+        println!("initializing");
+        92
+    });
+    println!("ready");
+    println!("{}", *lazy);
+    println!("{}", *lazy);
+
+    let lock: LazyLock<u32> = LazyLock::new(|| 0u32);
+    println!("{}", *lock);
+
+    println!("{}", &*DEEP_THOUGHT);
 }

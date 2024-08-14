@@ -3,6 +3,7 @@ use std::fmt;
 pub mod future_executor;
 pub mod s_async;
 pub mod s_others;
+pub mod s_pin;
 pub mod s_sync;
 pub mod timer_future;
 
