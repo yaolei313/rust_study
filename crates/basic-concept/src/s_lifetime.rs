@@ -1,3 +1,4 @@
+use std::slice::AsSlice;
 /// # ownership规则
 /// each value in rust has a owner
 /// there can only be one owner at a time
@@ -135,4 +136,52 @@ impl<'a> ImportantExcerpt<'a> {
         println!("Attention please: {}", self.part);
         announcement
     }
+}
+
+pub trait IterMap<'a, T: 'a> {
+    // 入参self的引用，返回对象包含引用，则需要标明返回对象的生命周期
+    // self 'a, T >= 'a (T不能包含生命周期短于'a的引用); U >= 'a（U不能包含生命周期短于'a的引用）
+    fn mapcollect<F, U>(&'a self, f: F) -> Vec<U>
+    where
+        F: Fn(&'a T) -> U,
+        U: 'a;
+}
+
+impl<'a, T: 'a> IterMap<'a, T> for Vec<T> {
+    fn mapcollect<F, U>(&'a self, f: F) -> Vec<U>
+    where
+        F: Fn(&'a T) -> U,
+        U: 'a,
+    {
+        self.iter().map(f).collect()
+    }
+}
+
+
+pub trait IterMap2<'a, T: 'a> {
+    fn mapcollect2<F, U>(&'a self, f: F) -> Vec<U>
+    where
+        F: Fn(&'a T) -> U,
+        U: 'a;
+}
+
+impl<'a, T: 'a> IterMap2<'a, T> for Vec<T> {
+    fn mapcollect2<F, U>(&'a self, f: F) -> Vec<U>
+    where
+        F: Fn(&'a T) -> U,
+        U: 'a,
+    {
+        self.iter().map(f).collect()
+    }
+}
+
+pub fn test_life() {
+    let v = vec![5; 5];
+    let v_2 = v.mapcollect(|x| x * x);
+
+    let v3 = vec![vec![1, 2, 3], vec![4, 5, 6]];
+    let v3_slice: Vec<&[i32]> = v3.mapcollect(|x| x.as_slice());
+
+    let v4: Vec<Vec<i32>> = vec![vec![1, 2, 3], vec![4, 5, 6]];
+    let v4_slice: Vec<&[i32]> = v4.mapcollect2(|x| x.as_slice());
 }

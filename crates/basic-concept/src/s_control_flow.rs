@@ -67,5 +67,6 @@ pub fn study_loop() {
     for number in 0..5 {
         print!("{}, ", number)
     }
-    println!("")
+    println!("");
+    let range1: Vec<i32> = (0..5).into_iter().map(|i| {print!("{i}");i+1}).collect();
 }

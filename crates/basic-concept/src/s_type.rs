@@ -8,7 +8,7 @@ use crate::s_pattern_match::Point;
 /// #const常量
 /// 和let相比
 /// 定义时必须赋值；必须指定类型;名称全部大写;定义时必须赋值且编译期就可以确定值;可以在任意作用域定义，其生命周期等同整个程序的生命周期，编译器会尽可能内联代码。
-const NAME: &str = "我没啥优点，就是活得久，嘿嘿";
+const NAME: &str = "必须指定类型，编译时确定值，会被inline";
 /// static全局变量
 /// 和const相比，不会inline；且可以是可变的mut；多线程访问的话，不安全，必须实现Sync trait；定义时必须赋值且编译期就可以确定值；名称也是必须大写。
 /// 可以用lazy static宏初始化静态变量
@@ -213,6 +213,8 @@ fn study_string() {
     for c in s5.chars() {
         print!("{c}\t");
     }
+
+    let s3: &str = s1.as_str()
 }
 
 fn study_vec() {
