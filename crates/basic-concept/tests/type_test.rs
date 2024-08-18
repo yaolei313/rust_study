@@ -3,8 +3,6 @@
 #[cfg(test)]
 mod test {
     use basic_concept::s_type;
-    use std::cell::Cell;
-    use std::collections::HashMap;
     use std::hash::Hash;
 
     #[test]

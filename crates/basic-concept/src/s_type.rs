@@ -125,7 +125,7 @@ fn init_config() -> Option<&'static mut Config> {
 ///
 /// [std::core::format_args_nl]
 ////
-pub fn study_primative_type() {
+pub fn study_primitive_type() {
     // 前者使用显示的类型标注，后者直接制定泛型类型
     let num: i8 = "127".parse().expect("not a number");
     let num2 = "312".parse::<i32>().expect("not a number");
@@ -170,29 +170,11 @@ pub fn study_compound_type() {
     // tuple
     let t3 = (1, 2, 3);
     println!("tuple is {} {} {}", t3.0, t3.1, t3.2);
-
-    // array，数组长度不可变。可以通过[1,1,1]或[1;3]创建
-    let array_1 = ["a", "b", "c"];
-
-    let obj_array = [Point { x: 1, y: 2 }];
-
-    // 访问array的下标是usize类型，需要使用as做类型转换
-    let number: i32 = 1;
-    let idx: usize = number as usize;
-    println!("array idx need usize type {}", array_1[idx]);
-
-    let mut array_2: [i32; 5] = [0; 5];
-    array_2[2] = 2; // 修改数据内容的话，必须增加mut
-    println!("array1: {:?},array2: {:#?}", array_1, array_2);
-
-    // 遍历
-    for i in array_2 {
-        print!("item: {}", i);
-    }
 }
 
 pub fn study_collection_type() {
     study_string();
+    study_array();
     study_vec();
     study_map();
     study_slice();
@@ -213,8 +195,35 @@ fn study_string() {
     for c in s5.chars() {
         print!("{c}\t");
     }
+}
 
-    let s3: &str = s1.as_str()
+fn study_array() {
+    // array，数组长度不可变。可以通过[1,1,1]或[1;3]创建
+    let array_1 = ["a", "b", "c"];
+    let arr2 = [1,3,5];
+    println!("sum is {}",array_sum(&arr2));
+    let arr3 = [10;5];
+
+    let obj_array = [Point { x: 1, y: 2 }];
+
+    // 访问array的下标是usize类型，需要使用as做类型转换
+    let number: i32 = 1;
+    let idx: usize = number as usize;
+    println!("array idx need usize type {}", array_1[idx]);
+
+    let mut array_2: [i32; 5] = [0; 5];
+    array_2[2] = 2; // 修改数据内容的话，必须增加mut
+    println!("array1: {:?},array2: {:#?}", array_1, array_2);
+
+    // 遍历
+    for i in array_2 {
+        print!("item: {}", i);
+    }
+}
+
+fn array_sum<const N: usize>(arr : &[i32;N])  -> i32{
+    // 常亮泛型，编译时确定
+    arr.iter().sum()
 }
 
 fn study_vec() {

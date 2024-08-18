@@ -18,7 +18,7 @@ pub mod s_type;
 pub mod s_unsafe;
 
 pub fn study_basic_concept() {
-    s_type::study_primative_type();
+    s_type::study_primitive_type();
     s_type::study_compound_type();
     s_type::study_collection_type();
     s_type::study_type_convert();
