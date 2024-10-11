@@ -1,5 +1,5 @@
 [package]
-name = "basic-concept"
+name = "basic_concept"
 version.workspace = true
 edition = "2021"
 
@@ -10,9 +10,9 @@ regex = "1.4.2"
 num = "0.4.0"
 ahash = "0.8.7"
 rand = "0.8.3"
-basic-utils.workspace = true
-hello-macro.workspace = true
-hello-macro-derive.workspace = true
+basic_utils.workspace = true
+hello_macro.workspace = true
+hello_macro_derive.workspace = true
 thread_local = "1.1.7"
 lazy_static = "1.4.0"
 thiserror = "1.0"

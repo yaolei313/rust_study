@@ -1,5 +1,5 @@
 [package]
-name = "basic-utils"
+name = "hello_macro"
 version.workspace = true
 edition = "2021"
 

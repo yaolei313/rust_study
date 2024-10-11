@@ -6,6 +6,11 @@ mod test {
     use std::hash::Hash;
 
     #[test]
+    fn test0() {
+        s_type::study_primitive_type();
+    }
+
+    #[test]
     fn test1() {
         s_type::study_enum_convert();
     }

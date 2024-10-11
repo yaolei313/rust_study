@@ -126,25 +126,23 @@ fn init_config() -> Option<&'static mut Config> {
 /// [std::core::format_args_nl]
 ////
 pub fn study_primitive_type() {
-    // 前者使用显示的类型标注，后者直接制定泛型类型
-    let num: i8 = "127".parse().expect("not a number");
-    let num2 = "312".parse::<i32>().expect("not a number");
-    println!("num {num} {num2}");
     // wrapping_* 补码循环溢出
     // checked_* 发生溢出，返回NONE值
     // overflowing_* 返回值和一个bool值指示是否溢出
     // saturating_* 值只能到最大值或者最小值
+    let num: i8 = 127;
     let r1 = num.wrapping_add(10);
     let r2 = num.checked_add(10);
     let (r3, over) = num.overflowing_add(10);
     let r4 = num.saturating_add(10);
-    println!("result: {} {} {} {} {}", r1, r2.unwrap(), r3, over, r4);
+    println!("result: {} {:?} {} {} {}", r1, r2, r3, over, r4);
 
     let n1 = 10 / 3;
-    println!("div result: {}", n1);
+    let n2 = 10.0 / 3f64; // 指定3为f64
+    println!("div result: {} {}", n1, n2);
 
     println!("The size of raw pointer: {}", std::mem::size_of::<*const u64>()); // 8  bytes
-    println!("The size of reference: {}", std::mem::size_of::<&u64>()); // 8  bytes
+    println!("The size of reference: {}", std::mem::size_of::<&i8>()); // 8  bytes
     println!("The size of slice: {}", std::mem::size_of::<&[u8]>()); // 16 bytes
     println!("The size of box: {}", std::mem::size_of::<Box<u8>>()); // 8  bytes
     println!("The size of box slice: {}", std::mem::size_of::<Box<[u8]>>()); // 16 bytes
@@ -155,6 +153,8 @@ pub fn study_primitive_type() {
 
     let s1 = "123";
     let p = s1.as_ptr();
+    let s3 = unsafe { *p };
+    println!("{}", s3);
 
     let t1 = b"hello world";
     let b1 = t1.starts_with(b"hello");
@@ -200,9 +200,9 @@ fn study_string() {
 fn study_array() {
     // array，数组长度不可变。可以通过[1,1,1]或[1;3]创建
     let array_1 = ["a", "b", "c"];
-    let arr2 = [1,3,5];
-    println!("sum is {}",array_sum(&arr2));
-    let arr3 = [10;5];
+    let arr2 = [1, 3, 5];
+    println!("sum is {}", array_sum(&arr2));
+    let arr3 = [10; 5];
 
     let obj_array = [Point { x: 1, y: 2 }];
 
@@ -221,7 +221,7 @@ fn study_array() {
     }
 }
 
-fn array_sum<const N: usize>(arr : &[i32;N])  -> i32{
+fn array_sum<const N: usize>(arr: &[i32; N]) -> i32 {
     // 常亮泛型，编译时确定
     arr.iter().sum()
 }
@@ -354,7 +354,17 @@ fn print_type<T: ?Sized>(_: &T) {
     println!("type: {}", std::any::type_name::<T>());
 }
 
+/*
+ * Deref &String => &Str &Vec<T> => &[T]
+ *
+ */
 pub fn study_type_convert() {
+    // string to int32, use FromStr trait
+    // 前者使用显示的类型标注，后者直接制定泛型类型
+    let num: i8 = "127".parse().expect("not a number");
+    let num2 = "312".parse::<i32>().expect("not a number");
+    println!("num {num} {num2}");
+
     // Array 转 slice &[i32]
     let a = [72, 101, 108, 108, 111];
     let a_slice: &[i32] = &a;

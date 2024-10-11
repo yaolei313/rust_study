@@ -1,4 +1,3 @@
-use std::slice::AsSlice;
 /// # ownership规则
 /// each value in rust has a owner
 /// there can only be one owner at a time
@@ -156,7 +155,6 @@ impl<'a, T: 'a> IterMap<'a, T> for Vec<T> {
         self.iter().map(f).collect()
     }
 }
-
 
 pub trait IterMap2<'a, T: 'a> {
     fn mapcollect2<F, U>(&'a self, f: F) -> Vec<U>

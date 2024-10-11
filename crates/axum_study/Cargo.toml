@@ -1,5 +1,5 @@
 [package]
-name = "axum-study"
+name = "axum_study"
 version.workspace = true
 edition = "2021"
 
