@@ -12,21 +12,8 @@ use hello_macro_derive::{route, sql, HelloMacro};
 ///
 /// 过程宏从输入中获得标记流，处理然后生成新的标记流，然后把标记流交给编译器继续处理。过程宏操作的是rust ast
 ///
-use crate::myvec;
+///use crate::myvec;
 use hello_macro::HelloMacro;
-
-pub fn study_macro() {
-    let v: Vec<u32> = vec![1, 2, 3];
-    let v1 = myvec!(2; 3; 4);
-    let v2 = myvec![3; 4; 5];
-    println!("vec is {:?} {:?} {:?}", v, v1, v2);
-
-    // derive macro
-    Pancakes::hello_macro();
-
-    // function-like macro
-    // let sql = sql!(select * from user where id=1);
-}
 
 /// 声明宏：使用macro_rules!定义
 ///
@@ -59,4 +46,17 @@ pub struct Pancakes;
 // #[route(GET, "/")]
 fn index() {
     todo!()
+}
+
+pub fn study_macro() {
+    let v: Vec<u32> = vec![1, 2, 3];
+    let v1 = myvec!(2; 3; 4);
+    let v2 = myvec![3; 4; 5];
+    println!("vec is {:?} {:?} {:?}", v, v1, v2);
+
+    // derive macro
+    Pancakes::hello_macro();
+
+    // function-like macro
+    // let sql = sql!(select * from user where id=1);
 }

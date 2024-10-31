@@ -82,11 +82,13 @@ impl Logger {
     }
 }
 
-// OnceCell 只能单线程场景下使用，不可以static
-// OnceLock 可以多线程场景下使用，可以static
+// OnceCell 只能单线程场景下使用，TODO
+// OnceLock 可以多线程场景下使用
 // LazyCell 单线程  本身自带初始化逻辑
 // LazyLock 多线程
 static LOG: OnceLock<Logger> = OnceLock::new();
+
+static T2: OnceCell<String> = OnceCell::new();
 
 // static LOG2: OnceCell<String> = OnceCell::new();
 

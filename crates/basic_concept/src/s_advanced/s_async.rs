@@ -2,6 +2,7 @@ use futures::{channel::mpsc, executor::block_on, select, FutureExt, Sink, SinkEx
 
 ///
 /// async function被调用时不会被执行，而是capture arguments into a future
+/// future实际是个状态机，当future执行出现阻塞时，会让出当前线程的控制权
 /// [std::future::IntoFuture]
 ///
 /// await

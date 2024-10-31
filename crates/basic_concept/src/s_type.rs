@@ -1,4 +1,4 @@
-use ahash::{AHasher, RandomState};
+use ahash::{AHashMap, AHasher, RandomState};
 use basic_utils;
 use lazy_static::lazy_static;
 use std::{collections::HashMap, fmt::Display, sync::Mutex};
@@ -16,7 +16,9 @@ static NAME2: &str = "hello world";
 
 /// calls in statics are limited to constant functions, tuple structs and tuple variants
 /// cannot call non-const fn `<String as From<&str>>::from` in statics
+/// constant fn是在编译时计算结果，static赋值语句只能调用constant fn
 ///static NAME21: Mutex<String> = Mutex::new(String::from("hello world"));
+static NAME21: Mutex<&str> = Mutex::new("hello world");
 
 lazy_static! {
     static ref NAME3: Mutex<String> = Mutex::new(String::from("hello world"));
@@ -89,7 +91,8 @@ fn init_config() -> Option<&'static mut Config> {
 /// collection type:
 /// Vec<>
 /// String  堆上分配内存，s[start..endExclude] to slice
-/// HashMap<>
+/// HashMap<> ahash
+/// HashSet<> ahash
 /// Range   序列只允许数字或者字符类型，因为它们是连续的，比如 0..4 范围不包括4,  0..=4 范围包括4
 ///
 /// slice type:(slice类型，没有对象所有权，也是可以copy的类型)  
@@ -322,6 +325,9 @@ fn study_map() {
 
     let mut map2 = HashMap::with_hasher(RandomState::default());
     map2.insert(1, 3);
+
+    let mut map3 = AHashMap::new();
+    map3.insert(1, 4);
 }
 
 pub fn study_slice() {
