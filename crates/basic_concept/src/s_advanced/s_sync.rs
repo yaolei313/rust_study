@@ -88,7 +88,10 @@ impl Logger {
 // LazyLock 多线程
 static LOG: OnceLock<Logger> = OnceLock::new();
 
-static T2: OnceCell<String> = OnceCell::new();
+// the trait `Sync` is not implemented for `std::cell::OnceCell<String>`
+// if you want to do aliasing and mutation between multiple threads, use `std::sync::OnceLock` instead
+// shared static variables must have a type that implements `Sync`
+// static T2: OnceCell<String> = OnceCell::new();
 
 // static LOG2: OnceCell<String> = OnceCell::new();
 

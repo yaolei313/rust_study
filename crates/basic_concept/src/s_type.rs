@@ -211,8 +211,11 @@ fn study_array() {
 
     // 访问array的下标是usize类型，需要使用as做类型转换
     let number: i32 = 1;
-    let idx: usize = number as usize;
-    println!("array idx need usize type {}", array_1[idx]);
+    // let idx: usize = number as usize; as可能失败
+    // fully-qualified syntax <usize as TryFrom<i32>>::try_from
+    if let Ok(idx) = usize::try_from(number) {
+        println!("array idx need usize type {}", array_1[idx]);
+    }
 
     let mut array_2: [i32; 5] = [0; 5];
     array_2[2] = 2; // 修改数据内容的话，必须增加mut
@@ -360,6 +363,9 @@ fn print_type<T: ?Sized>(_: &T) {
     println!("type: {}", std::any::type_name::<T>());
 }
 
+/// 若目标类型实现了[TryFrom]，则自动实现[TryInto]
+/// 同理，若目标类型实现了[From], 则自动实现[Into]
+/// 所有，实现TryFrom和From trait就可以了
 /*
  * Deref &String => &Str &Vec<T> => &[T]
  *

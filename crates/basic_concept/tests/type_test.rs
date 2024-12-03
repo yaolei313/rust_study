@@ -114,4 +114,14 @@ mod test {
     fn test8() {
         s_type::study_slice();
     }
+
+    #[test]
+    fn test_study_vec() {
+        let mut vec1 = vec![Point { x: 10 }, Point { x: 11 }, Point { x: 12 }];
+        println!("{:?}", vec1);
+        let item1 = vec1.pop();
+        println!("{:?} {:?}", vec1, item1);
+        let item2 = vec1.remove(1);
+        println!("{:?} {:?}", vec1, item2);
+    }
 }

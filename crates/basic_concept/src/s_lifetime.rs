@@ -18,7 +18,7 @@
 ///
 /// rust从不自动创建deep copy
 /// * 基本类型也都实现了[Copy], 参照s_type.rs
-/// * &T实现了[Copy]，故引用都是shallow copy。
+/// * &T,*mut T,*const T 实现了[Copy]，故引用都是shallow copy。但&mut T是不可以[!Copy]
 ///
 /// * data with stack and heap
 ///     - 由stack存储部分和heap存储部分组成，比如[String] 栈(ptr,len,capacity)和堆数组
