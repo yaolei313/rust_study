@@ -3,7 +3,7 @@
 /// 模式refutable 可反驳性，可能匹配失败的模式，称为可反驳的，比如if let Some(x)=a_value; 若a_value是None则Some(x)不能匹配。
 ///
 /// 函数参数，let语句，for循环 只能接受irrefutable pattern。
-/// if let,while let 可以接受retutable pattern和irrefutable pattern。
+/// if let,while let 可以接受refutable pattern和irrefutable pattern。
 ///
 /// match guard是match pattern之后的一段if语句。
 ///

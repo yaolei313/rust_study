@@ -10,6 +10,7 @@ opt-level = 3
 
 [workspace.package]
 version = "0.0.0"
+edition = "2021"
 
 [workspace.dependencies]
 # local crates
