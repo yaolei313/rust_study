@@ -3,11 +3,10 @@
 /// 数据竞争 data race 一个线程读取一个可变数据时，另一个线程正在修改数据，若不同步，可能产生读写误差。
 ///
 /// 默认channel是multi producer single consumer
-/// 若需要mpmc，可以使用crossbeam和flume库
+/// 若需要multi producer multi consumer (MPMC)，可以使用crossbeam和flume库
 ///
 use std::{
-    cell::{Cell, RefCell},
-    ops::Deref,
+    cell::RefCell,
     sync::{mpsc, Arc, Mutex},
     thread,
     time::Duration,
@@ -20,10 +19,22 @@ thread_local! {
 }
 
 pub fn study_thread() {
+    study_spawn();
+
+    study_channel();
+
+    study_sync_channel();
+
+    study_mutex();
+
+    study_thread_local();
+}
+
+fn study_spawn() {
     let t1 = thread::spawn(|| {
         for i in 1..10 {
             CONTEXT.with(|t| *t.borrow_mut() = i);
-            println!("number from the spawned thre'ad. {}", i);
+            println!("number from the spawned thread. {}", i);
             thread::sleep(Duration::from_millis(10));
         }
     });
@@ -40,13 +51,15 @@ pub fn study_thread() {
         println!("here is a vec {:?}", &v);
     });
     t2.join().unwrap();
-    // println!("{:?}", v); brorrowed moved value
+    // println!("{:?}", v); borrowed moved value
 
-    study_channel();
-
-    study_mutex();
-
-    study_thread_local();
+    let builder = thread::Builder::new().name(String::from("main_thread"));
+    let t3 = builder
+        .spawn(move || {
+            println!("here is thread spawned!");
+        })
+        .unwrap();
+    t3.join().unwrap();
 }
 
 fn study_channel() {
@@ -67,7 +80,7 @@ fn study_channel() {
     });
 
     thread::spawn(move || {
-        let vals = vec![String::from("hello"), String::from("world"), String::from("lisan")];
+        let vals = vec![String::from("hello1"), String::from("world1"), String::from("lisan1")];
         for val in vals {
             // val move
             tx1.send(val).unwrap();
@@ -86,7 +99,7 @@ pub fn study_sync_channel() {
     let (tx, rx) = mpsc::sync_channel::<String>(0);
     thread::spawn(move || {
         println!("waiting send");
-        tx.send(String::from("hello"));
+        tx.send(String::from("hello")).expect("panic message");
         println!("send finished.");
     });
 
@@ -158,5 +171,15 @@ pub fn study_thread_local() {
         })
         .join()
         .expect("wait thread finish error");
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::s_thread::{study_spawn, study_thread};
+
+    #[test]
+    pub fn test_study_spawn() {
+        study_spawn();
     }
 }

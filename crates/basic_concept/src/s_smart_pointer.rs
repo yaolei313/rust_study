@@ -28,7 +28,7 @@ use basic_utils::data_struct::BinaryTreeNode;
 /// T: DerefMut(target = U) , &mut T -> &mut U
 /// 只建议给自定义的智能指针实现Deref特征
 ///
-/// # Rc<T> [std::rc::Rc]   nagative impl ![Send] ![Sync]
+/// # Rc<T> [std::rc::Rc]   negative impl ![Send] ![Sync]
 /// 引用计数智能指针，单线程环境使用。不可变引用。可以RefCell实现内部可变性。
 /// Rc::new 会move ownership进入Rc，每次调用Rc::clone都会增加引用计数，离开作用域时减少引用计数
 ///
@@ -359,13 +359,6 @@ impl List {
     }
 }
 
-#[derive(Debug)]
-struct TreeNode {
-    value: i32,
-    parent: RefCell<Weak<TreeNode>>,
-    children: RefCell<Vec<Rc<TreeNode>>>,
-}
-
 fn study_ref_cell() {
     let a: Rc<_> = Rc::new(List::Cons(5, RefCell::new(Rc::new(List::Nil))));
 
@@ -386,11 +379,43 @@ fn study_ref_cell() {
     println!("a rc count after changing a = {}", Rc::strong_count(&a)); // 2
 
     println!("=========================");
-    let leaf = Rc::new(TreeNode {
-        value: 3,
-        parent: RefCell::new(Weak::new()),
-        children: RefCell::new(vec![]),
-    });
+
+    let a = RefCell::new(5);
+    let mut val = a.borrow_mut();
+    *val += 10;
+    // 只有引用的作用域是最后一次使用位置。非引用的生命周期是变量作用域。
+    drop(val);
+    println!("after modify {}", a.borrow());
+}
+
+// Rc内部是不可变，故此处可变属性使用RefCell
+#[derive(Debug)]
+struct TreeNode {
+    value: i32,
+    parent: RefCell<Weak<TreeNode>>,
+    children: RefCell<Vec<Rc<TreeNode>>>,
+}
+
+impl TreeNode {
+    pub fn new(value: i32) -> TreeNode {
+        TreeNode {
+            value,
+            parent: RefCell::new(Weak::new()),
+            children: RefCell::new(vec![]),
+        }
+    }
+
+    pub fn add_children(&self, children: Rc<TreeNode>) {
+        self.children.borrow_mut().push(children);
+    }
+
+    pub fn set_parent(&self, parent: Rc<TreeNode>) {
+        *self.parent.borrow_mut() = Rc::downgrade(&parent);
+    }
+}
+
+pub fn study_rc_weak() {
+    let mut leaf = Rc::new(TreeNode::new(5));
 
     println!(
         "leaf strong = {}, weak = {}",
@@ -399,13 +424,10 @@ fn study_ref_cell() {
     );
 
     {
-        let branch = Rc::new(TreeNode {
-            value: 5,
-            parent: RefCell::new(Weak::new()),
-            children: RefCell::new(vec![Rc::clone(&leaf)]),
-        });
+        let mut branch = Rc::new(TreeNode::new(4));
 
-        *leaf.parent.borrow_mut() = Rc::downgrade(&branch);
+        branch.add_children(Rc::clone(&leaf));
+        leaf.set_parent(Rc::clone(&branch));
 
         println!(
             "branch strong = {}, weak = {}",
@@ -422,18 +444,20 @@ fn study_ref_cell() {
         // branch被释放，leaf的strong count也减1
     }
 
-    println!("leaf parent = {:?}", leaf.parent.borrow().upgrade());
+    println!("parent = {:?}", leaf.parent.borrow().upgrade());
     println!(
         "leaf strong = {}, weak = {}",
         Rc::strong_count(&leaf),
         Rc::weak_count(&leaf),
     );
-    println!("=========================");
+}
 
-    let a = RefCell::new(5);
-    let mut val = a.borrow_mut();
-    *val += 10;
-    // 只有引用的作用域是最后一次使用位置。非引用的生命周期是变量作用域。
-    drop(val);
-    println!("after modify {}", a.borrow());
+#[cfg(test)]
+mod test {
+    use crate::s_smart_pointer::study_rc_weak;
+
+    #[test]
+    pub fn test1() {
+        study_rc_weak();
+    }
 }

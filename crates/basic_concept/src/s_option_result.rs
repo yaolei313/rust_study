@@ -92,3 +92,70 @@ fn read_username_from_file3() -> Result<String, io::Error> {
 fn last_char_of_first_line(text: &str) -> Option<char> {
     text.lines().next()?.chars().last()
 }
+
+#[cfg(test)]
+mod test {
+    //use core::slice::memchr;
+    use anyhow::Context;
+    use encoding_rs_io::DecodeReaderBytesBuilder;
+    use std::fs::File;
+    use std::io::{BufRead, BufReader, ErrorKind, Read};
+
+    #[test]
+    fn test1() -> anyhow::Result<()> {
+        let file = File::open("/Users/yao/Downloads/test1.txt").with_context(|| "file not found")?;
+        let decoded_reader = DecodeReaderBytesBuilder::new().build(file);
+        let mut reader = BufReader::new(decoded_reader);
+        let mut buf = Vec::with_capacity(10 * 1024);
+        let mut counter = 0;
+        loop {
+            match reader.read_until(b'\n', &mut buf) {
+                Ok(i) => {
+                    if i == 0 {
+                        break;
+                    }
+                    counter += 1;
+                    let line = String::from_utf8(buf[..i].to_vec())?;
+                    println!("{} {}", counter, line);
+                    buf.clear();
+                }
+                Err(e) => {
+                    return Err(e.try_into()?);
+                }
+            }
+        }
+        Ok(())
+    }
+
+    // fn read_until<R: BufRead + ?Sized>(r: &mut R, delim: &[u8; 2], buf: &mut Vec<u8>) -> std::io::Result<usize> {
+    //     let mut read = 0;
+    //     loop {
+    //         let (done, used) = {
+    //             let available = match r.fill_buf() {
+    //                 Ok(n) => n,
+    //                 Err(e) => return Err(e),
+    //             };
+    //             match memchr::memchr(delim[0], available) {
+    //                 Some(i) => {
+    //                     if i + 1 < available.len() && available[i + 1] == delim[1] {
+    //                         buf.extend_from_slice(&available[..=i + 1]);
+    //                         (true, i + 2)
+    //                     } else {
+    //                         buf.extend_from_slice(available);
+    //                         (false, available.len())
+    //                     }
+    //                 }
+    //                 None => {
+    //                     buf.extend_from_slice(available);
+    //                     (false, available.len())
+    //                 }
+    //             }
+    //         };
+    //         r.consume(used);
+    //         read += used;
+    //         if done || used == 0 {
+    //             return Ok(read);
+    //         }
+    //     }
+    // }
+}

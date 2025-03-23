@@ -1,7 +1,7 @@
 use super::s_struct_trait;
 use std::thread;
 
-// closure: anonymous functions that capture their enviroment.
+// closure: anonymous functions that capture their environment.
 pub fn study_closure() {
     // closure增加出入参类型标注
     let expensive_closure = |a: i32, b: i32| -> i32 { a + b };
@@ -32,7 +32,7 @@ pub fn study_closure() {
     // when `borrows_mutably` is defined, it captures a mutable reference to `list`
     let mut borrows_mutably = || list.push(7);
     // 这里不能immutable borrow 或new mutable borrow，因为已存在mutable borrow已存在，借出的可变引用的lifetime还没有结束。
-    // 调用完成后，we don't use closure agin after the closure is called, so the mutable borrow ends
+    // 调用完成后，we don't use closure again after the closure is called, so the mutable borrow ends
     borrows_mutably();
     println!("After calling closure2: {:?}", list);
 
@@ -53,9 +53,9 @@ fn move_owner() {
 /// 一旦closure捕获了reference或者value(ownership)，closure body能做如下操作，move a captured value out of the closure, mutate captured value, 什么也不做
 /// trait指定了struct或function能使用哪种closure。closure会依赖body中如何处理捕获的值，自动实现Fn trait。
 ///
-/// 1.[FnOnce] 只能被调用一次的闭包，所有的闭包都至少实现了这个trait。若a closure that moves captured value out of its body will only implement FnOnce trait.
-/// 2.[FnMut]:[FnOnce]  不会将所有权move出闭包体的闭包，但可能会修改对应的值。可以被多次调用。
-/// 3.[Fn]:[FnMut]     不move out，不修改捕获的引用或变了。可以被多次调用。
+/// 1.[FnOnce] 只能被调用一次的闭包，所有的闭包都至少实现了这个trait。若a closure that moves captured value out of its body will only implement FnOnce trait. because it can only be called once.
+/// 2.[FnMut]:[FnOnce]  不会将所有权move出闭包体的闭包，但可能会修改对应的值。    可以被多次调用。
+/// 3.[Fn]:[FnMut]     不move captured value out，且不修改captured value。 可以被多次调用。
 /// 以上3种trait只是区分如何使用捕获的reference或value(move),不影响捕获逻辑
 fn study_fn_trait() {
     // 1.若不需要捕获任何变量，可以直接使用函数名而不是闭包，比如

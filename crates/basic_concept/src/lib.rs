@@ -1,3 +1,5 @@
+extern crate core;
+
 pub mod s_advanced;
 pub mod s_closure;
 pub mod s_control_flow;

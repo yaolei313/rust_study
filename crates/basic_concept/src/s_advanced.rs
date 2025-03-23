@@ -41,9 +41,13 @@ pub mod timer_future;
 /// 泛型参数默认只能用于编译时已知大小的类型，即fn generic<T>(t: T) {}实际代表fn generic<T: Sized>(t: T)
 /// 若需要放宽这个限制，可以定义为fn generic<T: ?Sized>(t: &T) {} 代表T可能是也可能不是Sized。且参数t的类型不是Sized，那必须将其置于指针之后，此次选择是引用&T
 ///
-/// 点操作符
+/// 点操作符 automatic referencing and dereferencing
+/// object.something()
+/// rust自动添加&，&mut，*
+///
+///
 /// 以<Type as Trait>::function(receiver_if_method, next_arg, ...)为例
-/// 假设方法foo，有个接收器self，&self，&mut self，value的类型为T，那么value.foo()的逻辑如下：
+/// 假设方法foo，有个接收器self，&self，&mut self，value的类型为T，那么.foo()的逻辑如下：
 ///
 /// * 尝试匹配T::foo(value)
 /// * 尝试<&T>::foo(value) 和 <&mut T>::foo(value)
