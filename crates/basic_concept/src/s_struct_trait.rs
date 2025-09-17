@@ -13,7 +13,7 @@
 ///
 /// &dyn XxxTrait 或 Box<dyn XxxTrait>
 ///
-/// 不是所有的trait都可以有trait object，只有对象安全的才有。即有如下限制
+/// 不是所有的trait都可以有trait object / dyn compatible，只有对象安全的才有。即有如下限制
 /// a trait is object safe if it has following qualities:
 /// 1. 所有的super trait必须是object safe，[Sized]不能是super trait
 /// 2. 不能包含associated constants，不能包含 associated types with generics
@@ -294,3 +294,8 @@ enum CarType {
     New,
     Used { age: i32 },
 }
+
+// https://santiagopastorino.com/2022/10/20/what-rpits-rpitits-and-afits-and-their-relationship/
+// RPIT  Return Position Impl Trait
+// RPITIT Return position `impl Trait` in traits
+// AFIT Async Fn In Trait 一个async function的返回类型被脱糖为impl Future<Output = return_type_of_the_fn>

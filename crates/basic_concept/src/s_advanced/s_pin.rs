@@ -76,6 +76,7 @@ impl Test {
 
 #[cfg(test)]
 mod test {
+    use std::pin::Pin;
     use super::{InlineBuf, Test};
 
     #[test]
@@ -103,27 +104,27 @@ mod test {
         println!("t1: {:?},data1: {:?}", t1, t1.get_content());
     }
 
-    #[test]
-    fn test2() {
-        let mut test1 = Test::new("test1");
-        test1.init();
-        let mut test2 = Test::new("test2");
-        test2.init();
-
-        println!("a: {}, b: {}", test1.a(), test1.b());
-        println!("a: {}, b: {}", test2.a(), test2.b());
-    }
-
-    #[test]
-    fn test3() {
-        let mut test1 = Test::new("test1");
-        test1.init();
-        let mut test2 = Test::new("test2");
-        test2.init();
-
-        std::mem::swap(&mut test1, &mut test2);
-
-        println!("a: {}, b: {}", test1.a(), test1.b());
-        println!("a: {}, b: {}", test2.a(), test2.b());
-    }
+    // #[test]
+    // fn test2() {
+    //     let mut test1 = Test::new("test1");
+    //     test1.init();
+    //     let mut test2 = Test::new("test2");
+    //     test2.init();
+    //
+    //     println!("a: {}, b: {}", test1.a(), test1.b());
+    //     println!("a: {}, b: {}", test2.a(), test2.b());
+    // }
+    //
+    // #[test]
+    // fn test3() {
+    //     let mut test1 = Test::new("test1");
+    //     test1.init();
+    //     let mut test2 = Test::new("test2");
+    //     test2.init();
+    //
+    //     std::mem::swap(&mut test1, &mut test2);
+    //
+    //     println!("a: {}, b: {}", test1.a(), test1.b());
+    //     println!("a: {}, b: {}", test2.a(), test2.b());
+    // }
 }

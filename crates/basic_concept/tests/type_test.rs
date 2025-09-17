@@ -87,6 +87,8 @@ mod test {
         t2 = t1; // &T 是move，move后t1失效
 
         // println!("{:?}", t1);
+        let c1 = 'a';
+        println!("c1 size: {}", size_of_val(&c1));
     }
 
     /// [Copy]
@@ -94,12 +96,12 @@ mod test {
     #[test]
     fn test6() {
         let s = String::from("hello");
+        let s2 = String::from("world");
 
         let t1 = &s;
-        let t2;
-        t2 = t1; // &T 是copy
+        let t2 = t1; // &T 是copy
 
-        println!("{:?}", t1);
+        println!("{:?} {:?}", t1, t2);
     }
 
     #[test]
@@ -123,5 +125,36 @@ mod test {
         println!("{:?} {:?}", vec1, item1);
         let item2 = vec1.remove(1);
         println!("{:?} {:?}", vec1, item2);
+    }
+
+    #[test]
+    fn test9() {
+
+    }
+
+    pub trait Name {
+        fn print(&self);
+    }
+
+    pub struct Car {
+
+    }
+
+    impl Name for Car {
+        fn print(&self) {
+            println!("car");
+        }
+    }
+
+    pub struct Hold<T: Name> {
+        hold: Option<T>,
+    }
+
+    impl<T: Name> Hold<T> {
+        pub fn view(&self) {
+            if let Some(ref n) = self.hold {
+                n.print()
+            }
+        }
     }
 }

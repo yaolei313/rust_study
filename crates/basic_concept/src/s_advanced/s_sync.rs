@@ -82,11 +82,12 @@ impl Logger {
     }
 }
 
-// OnceCell 只能单线程场景下使用，TODO
-// OnceLock 可以多线程场景下使用
-// LazyCell 单线程  本身自带初始化逻辑
-// LazyLock 多线程
-static LOG: OnceLock<Logger> = OnceLock::new();
+/// https://www.reddit.com/r/rust/comments/126qaai/after_years_of_work_and_discussion_once_cell_has/
+/// [std::cell::OnceCell] 只能单线程场景下使用，TODO
+/// [std::sync::OnceLock] 可以多线程场景下使用   优先使用，可以通过方法内static OnceLock封装，避免API外部感知到OnceLock
+/// [std::cell::LazyCell] 单线程  本身自带初始化逻辑
+/// [std::sync::LazyLock] 多线程
+
 
 // the trait `Sync` is not implemented for `std::cell::OnceCell<String>`
 // if you want to do aliasing and mutation between multiple threads, use `std::sync::OnceLock` instead
@@ -102,6 +103,7 @@ static LIST: OnceList<u32> = OnceList::new();
 static COUNTER: AtomicU32 = AtomicU32::new(0);
 
 pub fn study_once_cell() {
+    static LOG: OnceLock<Logger> = OnceLock::new();
     // 相当于java的单例模式，OnceCell是非线程安全场景，OnceLock是线程安全场景。
     let t = LOG.get_or_init(|| Logger::new());
 

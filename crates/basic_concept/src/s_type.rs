@@ -2,7 +2,7 @@ use ahash::{AHashMap, AHasher, RandomState};
 use basic_utils;
 use lazy_static::lazy_static;
 use std::{collections::HashMap, fmt::Display, sync::Mutex};
-
+use std::f32::NAN;
 use crate::s_pattern_match::Point;
 
 /// #const常量
@@ -82,7 +82,7 @@ fn init_config() -> Option<&'static mut Config> {
 /// bool
 ///
 /// character type:
-/// char     使用单引号，21位，但宽度会被填充至32位, 4字节代表一个unicode字符,U+0000,U+D7FF,U+E000~U+10FFFF
+/// char     使用单引号，21位，但宽度会被填充至32位, 4字节代表一个unicode字符,U+0000~U+D7FF,U+E000~U+10FFFF
 ///
 /// compound type:
 /// tuple    ()  仅包含实现了copy trait的tuple，array也是可以copy的类型
@@ -144,15 +144,15 @@ pub fn study_primitive_type() {
     let n2 = 10.0 / 3f64; // 指定3为f64
     println!("div result: {} {}", n1, n2);
 
-    println!("The size of raw pointer: {}", std::mem::size_of::<*const u64>()); // 8  bytes
-    println!("The size of reference: {}", std::mem::size_of::<&i8>()); // 8  bytes
-    println!("The size of slice: {}", std::mem::size_of::<&[u8]>()); // 16 bytes
-    println!("The size of box: {}", std::mem::size_of::<Box<u8>>()); // 8  bytes
-    println!("The size of box slice: {}", std::mem::size_of::<Box<[u8]>>()); // 16 bytes
-    println!("The size of vec: {}", std::mem::size_of::<Vec<u8>>()); // 24 bytes
-    println!("The size of String: {}", std::mem::size_of::<String>()); // 24 bytes
-    println!("The size of string slice: {}", std::mem::size_of::<&str>()); // 16 bytes
-    println!("The size of Array[u8;3]: {}", std::mem::size_of::<[u8; 3]>()); // 3 bytes
+    println!("The size of raw pointer: {}", size_of::<*const u64>()); // 8  bytes
+    println!("The size of reference: {}", size_of::<&i8>()); // 8  bytes
+    println!("The size of slice: {}", size_of::<&[u8]>()); // 16 bytes
+    println!("The size of box: {}", size_of::<Box<u8>>()); // 8  bytes
+    println!("The size of box slice: {}", size_of::<Box<[u8]>>()); // 16 bytes
+    println!("The size of vec: {}", size_of::<Vec<u8>>()); // 24 bytes
+    println!("The size of String: {}", size_of::<String>()); // 24 bytes
+    println!("The size of string slice: {}", size_of::<&str>()); // 16 bytes
+    println!("The size of Array[u8;3]: {}", size_of::<[u8; 3]>()); // 3 bytes
 
     let s1 = "123";
     let p = s1.as_ptr();

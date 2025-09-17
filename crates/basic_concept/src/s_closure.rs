@@ -1,3 +1,5 @@
+use std::fmt::{Display, Formatter};
+use std::future::Future;
 use super::s_struct_trait;
 use std::thread;
 
@@ -125,4 +127,54 @@ where
     F: FnMut(&str) -> (),
 {
     f(input)
+}
+
+
+// ---- async closure
+
+async fn my_async_function() -> i32 {
+    // Simulate some async work
+    10
+}
+
+async fn takes_async_closure<F, Fut>(f: F)
+where
+    F: FnOnce() -> Fut,
+    Fut: Future<Output = i32>,
+{
+    let result = f().await;
+    println!("Result: {}", result);
+}
+
+fn takes_method<T: Display, R: Display>(obj: &T, method : for<'a> fn(&'a T) -> R)
+{
+    let result = method(obj);
+    println!("Result: {}", result);
+}
+
+async fn caller() {
+    let my_obj = MyStruct { value: 5 };
+    takes_async_closure(|| async { my_async_function().await + 5 }).await;
+    takes_async_closure(add_val).await;
+    takes_method(&my_obj, MyStruct::add_val);
+}
+
+struct MyStruct {
+    value: i32,
+}
+
+impl Display for MyStruct {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.value)
+    }
+}
+
+impl MyStruct {
+    fn add_val(&self) -> i32 {
+        11 + 5
+    }
+}
+
+async fn add_val() -> i32{
+    10 + 5
 }

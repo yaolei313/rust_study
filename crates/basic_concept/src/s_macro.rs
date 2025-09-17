@@ -19,6 +19,21 @@ use hello_macro::HelloMacro;
 ///
 /// 开始定义宏，宏名称不带！，使用的时候才带!
 /// 宏定义使用[]或{}都是可以的
+/// designator 标志符
+/// block
+/// expr        expressions
+/// ident       variable/function names
+/// item
+/// lifetime
+/// literal     literal constants
+/// meta
+/// pat         pattern
+/// pat_param
+/// path
+/// stmt        statement
+/// tt          token tree
+/// ty          type
+/// vis         visibility qualifier
 #[macro_export]
 macro_rules! myvec {
     // 分支模式，若是匹配，则执行=>之后的内容

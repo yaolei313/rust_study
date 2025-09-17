@@ -17,8 +17,15 @@
 /// * move实际是浅复制(shallow copy)+旧variable绑定失效(value离开作用域会释放内存，旧绑定失效可以避免double free的问题)
 ///
 /// rust从不自动创建deep copy
-/// * 基本类型也都实现了[Copy], 参照s_type.rs
+/// * 基本类型也都实现了[Copy], 参照s_type.rs，只适用于数据完全存储于栈上的数据
 /// * &T,*mut T,*const T 实现了[Copy]，故引用都是shallow copy。但&mut T是不可以[!Copy]
+///
+/// 若需要deep copy，则需要实现[clone]
+///
+/// Move: 未实现[Copy]的类型, shallow copy
+/// Copy: 完全存储在栈上的数据，基本类型，=操作符触发shallow copy
+/// Clone: 复制堆和栈上的数据
+///
 ///
 /// * data with stack and heap
 ///     - 由stack存储部分和heap存储部分组成，比如[String] 栈(ptr,len,capacity)和堆数组
